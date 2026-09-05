@@ -141,16 +141,12 @@
       <p class="status-sub" id="status-sub">…</p>
       <p class="status-sub" data-i18n="canteenSub"></p>
     </div>
-    <button class="btn btn-primary" id="invite-btn">🚀 <span data-i18n="btnInvite"></span></button>
   </section>
 
   <section id="menu-section">
     <div class="row-between">
       <h2 data-i18n="headingMenu"></h2>
-      <div style="display:flex;gap:.6rem;align-items:center">
-        <a id="official-link" class="link" href="#" target="_blank" rel="noopener" data-i18n="linkOriginal"></a>
-        <button class="btn btn-ghost" id="update-menu-btn">✏️ <span data-i18n="btnUpdate"></span></button>
-      </div>
+      <a id="official-link" class="link" href="#" target="_blank" rel="noopener" data-i18n="linkOriginal"></a>
     </div>
     <div id="day-selector" class="chip-row" style="margin-bottom:.75rem"></div>
     <div id="menu-status" class="muted" style="margin-bottom:.5rem"></div>
@@ -206,21 +202,6 @@
 
 </main>
 
-<dialog id="parse-modal">
-  <div class="modal-box">
-    <div class="row-between" style="margin-bottom:.25rem">
-      <h2 style="margin:0;text-transform:none;font-size:.95rem;color:#fff" data-i18n="modalTitle"></h2>
-      <button id="close-modal-btn" style="color:var(--slate-400);font-size:1rem">✕</button>
-    </div>
-    <p class="muted" data-i18n="modalDesc" style="margin-bottom:.5rem"></p>
-    <textarea id="parse-input" rows="8"></textarea>
-    <p class="muted" id="parse-preview" style="margin:.5rem 0"></p>
-    <div class="row-between" style="justify-content:flex-end;gap:.5rem">
-      <button class="btn btn-ghost" id="cancel-parse-btn" data-i18n="btnCancel"></button>
-      <button class="btn btn-primary" id="save-parse-btn" data-i18n="btnSave"></button>
-    </div>
-  </div>
-</dialog>
 
 <script>
 const I18N = {
@@ -378,14 +359,28 @@ const LOCALE_TAG = { sk:'sk-SK', ru:'ru-RU', uk:'uk-UA', en:'en-GB' };
 const Storage = {
   memory: {},
   async get(key) {
-    try { if (window.storage) { const r = await window.storage.get(key, false); return r ? JSON.parse(r.value) : null; } }
-    catch (e) {}
+    try {
+      const raw = localStorage.getItem('tuke-hub:' + key);
+      if (raw != null) return JSON.parse(raw);
+    } catch (e) {}
+    try {
+      if (window.storage) {
+        const r = await window.storage.get(key, false);
+        if (r) return JSON.parse(r.value);
+      }
+    } catch (e) {}
     return this.memory[key] ?? null;
   },
   async set(key, value) {
     this.memory[key] = value;
-    try { if (window.storage) await window.storage.set(key, JSON.stringify(value), false); }
-    catch (e) { console.warn('Storage write failed, kept in memory only', e); }
+    try {
+      localStorage.setItem('tuke-hub:' + key, JSON.stringify(value));
+    } catch (e) {
+      console.warn('localStorage write failed', e);
+    }
+    try {
+      if (window.storage) await window.storage.set(key, JSON.stringify(value), false);
+    } catch (e) {}
   }
 };
 
@@ -493,20 +488,34 @@ const DEMO_MENU = [
 ];
 
 function parseMenuText(raw){
-  const priceRe = /(\d+[.,]\d{2})\s*€/;
-  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const priceRe = /(\d+[.,]\d{2})\s*€?/;
+  const lines = String(raw).split(/\r?\n/).map(l => l.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').trim()).filter(Boolean);
   const items = [];
   let currentCategory = 'Iné';
   lines.forEach(line => {
     const hasPrice = priceRe.test(line);
     const catMatch = CATEGORY_MAP.find(c => c.re.test(line));
-    if (catMatch && !hasPrice) { currentCategory = line; return; }
+    if (catMatch && !hasPrice) {
+      currentCategory = catMatch.key === 'catSoup' ? 'Polievka'
+        : catMatch.key === 'catMenu1' ? 'Menu 1'
+        : catMatch.key === 'catMenu2' ? 'Menu 2'
+        : catMatch.key === 'catSalad' ? 'Šalát'
+        : line;
+      return;
+    }
     if (!hasPrice) return;
     const m = line.match(priceRe);
+    if (!m) return;
     const price = parseFloat(m[1].replace(',', '.'));
-    const name = line.replace(priceRe, '').replace(/€/, '').trim().replace(/[-–:]+$/, '').trim();
-    if (catMatch) currentCategory = catMatch[0];
-    if (name) items.push({ rawCategory: currentCategory, name, price });
+    let name = line.replace(priceRe, '').replace(/€/g, '').trim().replace(/[-–:]+$/, '').trim();
+    if (catMatch) {
+      currentCategory = catMatch.key === 'catSoup' ? 'Polievka'
+        : catMatch.key === 'catMenu1' ? 'Menu 1'
+        : catMatch.key === 'catMenu2' ? 'Menu 2'
+        : catMatch.key === 'catSalad' ? 'Šalát'
+        : currentCategory;
+    }
+    if (name && !isNaN(price)) items.push({ rawCategory: currentCategory, name, price });
   });
   return items;
 }
@@ -589,34 +598,6 @@ async function loadAndRenderMenu(){
       </div>`;
   }).join('');
 }
-
-document.getElementById('update-menu-btn').onclick = () => {
-  document.getElementById('parse-input').value = '';
-  document.getElementById('parse-preview').textContent = '';
-  document.getElementById('parse-modal').showModal();
-};
-document.getElementById('close-modal-btn').onclick = () => document.getElementById('parse-modal').close();
-document.getElementById('cancel-parse-btn').onclick = () => document.getElementById('parse-modal').close();
-
-document.getElementById('parse-input').addEventListener('input', e => {
-  const items = parseMenuText(e.target.value);
-  document.getElementById('parse-preview').textContent = items.length
-    ? t('parsedCount') + items.map(i => i.name).join(', ')
-    : t('parsedNone');
-});
-
-document.getElementById('save-parse-btn').onclick = async () => {
-  const raw = document.getElementById('parse-input').value;
-  const items = parseMenuText(raw);
-  if (!items.length) { alert(t('parseAlert')); return; }
-  await Storage.set(`menu:${selectedDayKey}`, { items, updatedAt: Date.now() });
-  document.getElementById('parse-modal').close();
-  loadAndRenderMenu();
-};
-
-document.getElementById('invite-btn').onclick = () => {
-  window.open(`https://t.me/share/url?url=${encodeURIComponent(t('inviteText'))}`, '_blank');
-};
 
 const DISCOUNT_SPOTS = [
   { id:'jedalen',   cat:'food',      phrase:'subsidyFood',       name:'Jedáleň TUKE (Němcovej)',    addr:'B. Němcovej 1, Košice',        lat:48.7305, lng:21.2458 },
