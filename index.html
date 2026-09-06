@@ -249,6 +249,21 @@
   .credit-line strong{color:var(--blue-400);font-weight:600}
   .credit-heart{color:#f472b6}
 
+
+  .offline-banner{
+    display:none;position:sticky;top:0;z-index:45;margin:0 -1rem .75rem;
+    padding:.55rem 1rem;background:rgba(251,191,36,.15);border-bottom:1px solid rgba(251,191,36,.4);
+    color:var(--amber-400);font-size:.8rem;font-weight:600;text-align:center;
+  }
+  .offline-banner.show{display:block}
+  .collapse-btn{
+    min-width:36px;min-height:36px;border-radius:.5rem;font-size:.85rem;
+    color:var(--muted);padding:.25rem .5rem;
+  }
+  .collapse-btn:active{background:var(--slate-700)}
+  .section-body.is-collapsed{display:none}
+  .share-btn{min-height:36px;padding:.35rem .65rem;font-size:.7rem}
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -304,6 +319,8 @@
 </header>
 
 <main class="wrap">
+  <div class="offline-banner" id="offline-banner" data-i18n="offlineBanner"></div>
+
 
   <!-- Quick links -->
   <section style="margin-top:1rem">
@@ -342,27 +359,41 @@
   <section id="news-section">
     <div class="row-between">
       <h2 data-i18n="headingNews"></h2>
-      <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap">
+        <button type="button" class="toggle-chip" id="news-novinky-only" data-i18n="newsOnlyNovinky">Novinky only</button>
         <button type="button" class="btn btn-ghost" id="news-translate-btn" data-i18n="newsTranslate">Translate</button>
-        <a class="link" href="https://www.tuke.sk/sk" target="_blank" rel="noopener" data-i18n="newsAll">All news ↗</a>
+        <button type="button" class="collapse-btn" data-collapse="news-body" aria-label="collapse">▾</button>
       </div>
     </div>
-    <div id="news-list" class="anim-in"></div>
-    <p class="muted" id="news-status" style="margin-top:.35rem"></p>
+    <div class="section-body" id="news-body">
+      <div id="news-list" class="anim-in"></div>
+      <p class="muted" id="news-status" style="margin-top:.35rem"></p>
+      <p style="margin-top:.25rem"><a class="link" href="https://www.tuke.sk/sk" target="_blank" rel="noopener" data-i18n="newsAll">All news ↗</a></p>
+    </div>
   </section>
 
 <section id="menu-section">
     <div class="row-between">
       <h2 data-i18n="headingMenu"></h2>
-      <a id="official-link" class="link" href="#" target="_blank" rel="noopener" data-i18n="linkOriginal"></a>
+      <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap">
+        <button type="button" class="btn btn-ghost share-btn" id="share-menu-btn" data-i18n="shareBtn">Share</button>
+        <a id="official-link" class="link" href="#" target="_blank" rel="noopener" data-i18n="linkOriginal"></a>
+        <button type="button" class="collapse-btn" data-collapse="menu-body">▾</button>
+      </div>
     </div>
-    <div id="day-selector" class="chip-row" style="margin-bottom:.75rem"></div>
-    <div id="menu-status" class="muted" style="margin-bottom:.5rem"></div>
-    <div id="menu-list"></div>
+    <div class="section-body" id="menu-body">
+      <div id="day-selector" class="chip-row" style="margin-bottom:.75rem"></div>
+      <div id="menu-status" class="muted" style="margin-bottom:.5rem"></div>
+      <div id="menu-list"></div>
+    </div>
   </section>
 
   <section id="subsidy-section">
-    <h2 data-i18n="headingSubsidy"></h2>
+    <div class="row-between">
+      <h2 data-i18n="headingSubsidy" style="margin:0"></h2>
+      <button type="button" class="collapse-btn" data-collapse="subsidy-body">▾</button>
+    </div>
+    <div class="section-body" id="subsidy-body">
     <div class="card calc-card">
       <p class="muted" data-i18n="subsidyDesc" style="margin:0 0 .5rem"></p>
       <div class="calc-row">
@@ -380,6 +411,7 @@
       </div>
       <p class="muted" style="margin:.5rem 0 0; font-size:.7rem" data-i18n="subsidyNote"></p>
     </div>
+    </div><!-- /subsidy-body -->
   </section>
 
   <section id="discounts-section">
@@ -514,7 +546,9 @@ en: {
   closeSoon:"Canteen closes in less than 30 minutes!",
   todayNoMenu:"No menu loaded for today yet.",
   weatherLoading:"Loading weather…",
-        headingInstall:"Install on your phone",
+          shareBtn:"Share", shareMenuTitle:"TUKE canteen menu", offlineBanner:"You're offline — showing last saved data",
+  newsOnlyNovinky:"Novinky only", sectionCollapse:"Collapse",
+  headingInstall:"Install on your phone",
   androidStep1:"Open this site in Chrome",
   androidStep2:"Menu ⋮ → Install app / Add to Home screen",
   androidStep3:"Confirm — the TUKE Hub icon appears on the home screen",
@@ -571,7 +605,9 @@ ru: {
   closeSoon:"Столовая закроется меньше чем через 30 минут!",
   todayNoMenu:"Меню на сегодня ещё не загружено.",
   weatherLoading:"Загрузка погоды…",
-        headingInstall:"Установить на телефон",
+          shareBtn:"Поделиться", shareMenuTitle:"Меню столовой TUKE", offlineBanner:"Нет сети — показано последнее сохранённое",
+  newsOnlyNovinky:"Только Novinky", sectionCollapse:"Свернуть",
+  headingInstall:"Установить на телефон",
   androidStep1:"Открой сайт в Chrome",
   androidStep2:"Меню ⋮ → «Установить приложение» / «На главный экран»",
   androidStep3:"Подтверди — иконка TUKE Hub появится на экране",
@@ -628,7 +664,9 @@ uk: {
   closeSoon:"Їдальня зачиниться менше ніж за 30 хвилин!",
   todayNoMenu:"Меню на сьогодні ще не завантажено.",
   weatherLoading:"Завантаження погоди…",
-        headingInstall:"Встановити на телефон",
+          shareBtn:"Поділитися", shareMenuTitle:"Меню їдальні TUKE", offlineBanner:"Немає мережі — показано останнє збережене",
+  newsOnlyNovinky:"Тільки Novinky", sectionCollapse:"Згорнути",
+  headingInstall:"Встановити на телефон",
   androidStep1:"Відкрий сайт у Chrome",
   androidStep2:"Меню ⋮ → «Встановити застосунок» / «На головний екран»",
   androidStep3:"Підтверди — іконка TUKE Hub з’явиться на екрані",
@@ -685,7 +723,9 @@ sk: {
   closeSoon:"Jedáleň sa zatvára o menej ako 30 minút!",
   todayNoMenu:"Menu na dnes ešte nie je načítané.",
   weatherLoading:"Načítavam počasie…",
-        headingInstall:"Inštalácia do telefónu",
+          shareBtn:"Zdieľať", shareMenuTitle:"Menu jedálne TUKE", offlineBanner:"Ste offline — zobrazujú sa posledné uložené údaje",
+  newsOnlyNovinky:"Len Novinky", sectionCollapse:"Zbaliť",
+  headingInstall:"Inštalácia do telefónu",
   androidStep1:"Otvor stránku v Chrome",
   androidStep2:"Menu ⋮ → Inštalovať aplikáciu / Pridať na plochu",
   androidStep3:"Potvrď — ikona TUKE Hub sa objaví na ploche",
@@ -1095,8 +1135,11 @@ function renderDiscounts(){
 
   if (map && mapReady) {
     map.eachLayer(layer => { if (layer instanceof L.Marker) map.removeLayer(layer); });
+    if (window._userMarker) { try { map.addLayer(window._userMarker); } catch(e){} }
+    addCampusMarkersToMap();
     spots.forEach(spot => {
-      L.marker([spot.lat, spot.lng]).addTo(map).bindPopup(`<b>${escapeHtml(spot.name)}</b><br>${escapeHtml(t(spot.phrase))}`);
+      if (spot.lat == null || spot.lng == null) return;
+      L.marker([spot.lat, spot.lng]).addTo(map).bindPopup(`<b>${escapeHtml(spot.name)}</b><br>${escapeHtml(typeof spot.phrase==='string' && !String(spot.phrase).startsWith('discount') ? spot.phrase : t(spot.phrase))}`);
     });
   }
 
@@ -1119,9 +1162,21 @@ function renderDiscounts(){
             ${spot.url ? `<a class="nav-btn" href="${escapeHtml(spot.url)}" target="_blank" rel="noopener">🔗 ISIC</a>` : ''}
           </div>
         </div>
-        <button class="fav-btn${isFav ? ' active' : ''}" data-fav-id="${spot.id}" aria-label="favorite">${isFav ? '★' : '☆'}</button>
+        <div style="display:flex;flex-direction:column;gap:.25rem;align-items:center">
+          <button class="fav-btn${isFav ? ' active' : ''}" data-fav-id="${spot.id}" aria-label="favorite">${isFav ? '★' : '☆'}</button>
+          <button type="button" class="share-btn btn btn-ghost" data-share-disc="${escapeHtml(spot.id)}" title="Share">↗</button>
+        </div>
       </div>`;
   }).join('');
+
+  listEl.querySelectorAll('[data-share-disc]').forEach(btn => {
+    btn.onclick = () => {
+      const s = DISCOUNT_SPOTS.find(x => x.id === btn.dataset.shareDisc);
+      if (!s) return;
+      const ph = typeof s.phrase === 'string' && !s.phrase.startsWith('discount') ? s.phrase : t(s.phrase);
+      shareDiscount(s.name, ph, s.addr || '');
+    };
+  });
 
   listEl.querySelectorAll('[data-fav-id]').forEach(btn => {
     btn.onclick = () => toggleFavorite(btn.dataset.favId);
@@ -1408,6 +1463,63 @@ function renderSavings(){
 
 
 /* ===== TUKE News RSS + optional translation ===== */
+
+/* Share / offline / collapse / news filter */
+let newsNovinkyOnly = true; // default: hide job posts
+
+function setupCollapse(){
+  document.querySelectorAll('[data-collapse]').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.getAttribute('data-collapse');
+      const body = document.getElementById(id);
+      if (!body) return;
+      const collapsed = body.classList.toggle('is-collapsed');
+      btn.textContent = collapsed ? '▸' : '▾';
+      try { localStorage.setItem('tuke-hub:collapse:'+id, collapsed ? '1' : '0'); } catch(e){}
+    };
+    const id = btn.getAttribute('data-collapse');
+    try {
+      if (localStorage.getItem('tuke-hub:collapse:'+id) === '1') {
+        document.getElementById(id)?.classList.add('is-collapsed');
+        btn.textContent = '▸';
+      }
+    } catch(e){}
+  });
+}
+
+function setupOfflineBanner(){
+  const el = document.getElementById('offline-banner');
+  const sync = () => {
+    if (!el) return;
+    if (navigator.onLine) el.classList.remove('show');
+    else { el.classList.add('show'); el.textContent = t('offlineBanner'); }
+  };
+  window.addEventListener('online', sync);
+  window.addEventListener('offline', sync);
+  sync();
+}
+
+async function shareMenu(){
+  const items = [...document.querySelectorAll('#menu-list .menu-item')].map(n => n.innerText.replace(/\s+/g,' ').trim());
+  const text = (t('shareMenuTitle') || 'TUKE menu') + '\n' + (items.slice(0,12).join('\n') || '—') + '\n' + location.href;
+  try {
+    if (navigator.share) await navigator.share({ title: 'TUKE Hub', text, url: location.href });
+    else {
+      await navigator.clipboard.writeText(text);
+      alert('OK ✓');
+    }
+  } catch(e){}
+}
+
+async function shareDiscount(name, phrase, addr){
+  const text = name + (phrase ? ' — ' + phrase : '') + (addr ? '\n📍 ' + addr : '') + '\n' + location.href;
+  try {
+    if (navigator.share) await navigator.share({ title: name, text, url: location.href });
+    else { await navigator.clipboard.writeText(text); alert('OK ✓'); }
+  } catch(e){}
+}
+
+
 const NEWS_FEED = 'https://api.prod.tuke.sk/feed/1/sk/articles-feed';
 let newsItems = [];
 let newsTranslated = false;
@@ -1461,14 +1573,26 @@ async function translateNewsToLang() {
   if (status) status.textContent = t('newsTranslated');
 }
 
+function getVisibleNews(){
+  if (!newsNovinkyOnly) return newsItems;
+  return newsItems.filter(it => {
+    const c = (it.cat || '').toLowerCase();
+    // hide job listings by default
+    if (/pracov|job|career|miesta|výberové|vyberove/i.test(c + ' ' + it.title)) return false;
+    if (/novinky|news|aktualit/i.test(c)) return true;
+    // if no category, keep non-job titles
+    return !/výberové konanie|vyberove konanie/i.test(it.title);
+  });
+}
 function renderNewsList() {
   const el = document.getElementById('news-list');
   if (!el) return;
-  if (!newsItems.length) {
+  const visible = getVisibleNews();
+  if (!visible.length) {
     el.innerHTML = `<div class="empty-box">${escapeHtml(t('newsError'))}</div>`;
     return;
   }
-  el.innerHTML = newsItems.map((item, idx) => {
+  el.innerHTML = visible.map((item, idx) => {
     const title = newsTranslated && item.titleTr ? item.titleTr : item.title;
     const desc = newsTranslated && item.descTr ? item.descTr : item.desc;
     const d = item.date ? new Date(item.date) : null;
@@ -1538,8 +1662,22 @@ async function init(){
   updateClockAndStatus();
   updateCloseWarning();
   setInterval(() => { updateClockAndStatus(); updateCloseWarning(); }, 30000);
-    loadWeather();
+  loadWeather();
   loadNews();
+  setupCollapse();
+  setupOfflineBanner();
+  document.getElementById('share-menu-btn')?.addEventListener('click', shareMenu);
+  const novBtn = document.getElementById('news-novinky-only');
+  if (novBtn) {
+    try { newsNovinkyOnly = localStorage.getItem('tuke-hub:news-novinky') !== '0'; } catch(e){}
+    novBtn.classList.toggle('active', newsNovinkyOnly);
+    novBtn.onclick = () => {
+      newsNovinkyOnly = !newsNovinkyOnly;
+      novBtn.classList.toggle('active', newsNovinkyOnly);
+      try { localStorage.setItem('tuke-hub:news-novinky', newsNovinkyOnly ? '1' : '0'); } catch(e){}
+      renderNewsList();
+    };
+  }
   document.getElementById('news-translate-btn')?.addEventListener('click', () => {
     if (newsTranslated) {
       newsTranslated = false;
@@ -1550,7 +1688,7 @@ async function init(){
       translateNewsToLang();
     }
   });
- setTimeout(initMap, 50);
+  setTimeout(initMap, 50);
 }
 
 init();
