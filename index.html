@@ -310,10 +310,14 @@
   </section>
 
   <section id="discounts-section">
-    <h2 data-i18n="headingMap"></h2>
-    <div id="map"></div>
+    <div class="row-between">
+      <h2 data-i18n="headingMap" style="margin:0"></h2>
+      <button type="button" class="btn btn-ghost" id="geo-btn" title="GPS">📍 <span data-i18n="geoBtn">My location</span></button>
+    </div>
+    <div id="map" style="height:16rem;border-radius:.75rem;margin:.5rem 0;border:1px solid var(--border)"></div>
     <p class="muted" id="map-fallback" style="display:none"></p>
-    <p class="muted" id="approx-note" style="margin:-0.4rem 0 .75rem"></p>
+    <p class="muted" id="approx-note" style="margin:-0.2rem 0 .75rem"></p>
+    <p class="muted" style="font-size:.7rem;margin:0 0 .75rem" data-i18n="mapLegend"></p>
 
     <div class="row-between">
       <span></span>
@@ -412,6 +416,7 @@ en: {
   closeSoon:"Canteen closes in less than 30 minutes!",
   todayNoMenu:"No menu loaded for today yet.",
   weatherLoading:"Loading weather…",
+    youAreHere:"You are here", geoBtn:"My location", geoDenied:"Could not get location — allow GPS in browser settings.", mapLegend:"Blue = faculties · Green = services · Orange = stops · Purple = main building",
   installHint:"Add to home screen for quick access", installBtn:"Install"
 },
 ru: {
@@ -459,6 +464,7 @@ ru: {
   closeSoon:"Столовая закроется меньше чем через 30 минут!",
   todayNoMenu:"Меню на сегодня ещё не загружено.",
   weatherLoading:"Загрузка погоды…",
+    youAreHere:"Вы здесь", geoBtn:"Моё местоположение", geoDenied:"Не удалось получить геолокацию — разрешите GPS в настройках браузера.", mapLegend:"Синий = факультеты · Зелёный = сервисы · Оранжевый = остановки · Фиолетовый = главная",
   installHint:"Добавить на домашний экран", installBtn:"Установить"
 },
 uk: {
@@ -506,6 +512,7 @@ uk: {
   closeSoon:"Їдальня зачиниться менше ніж за 30 хвилин!",
   todayNoMenu:"Меню на сьогодні ще не завантажено.",
   weatherLoading:"Завантаження погоди…",
+    youAreHere:"Ви тут", geoBtn:"Моє місцезнаходження", geoDenied:"Не вдалося отримати геолокацію — дозвольте GPS у налаштуваннях браузера.", mapLegend:"Синій = факультети · Зелений = сервіси · Помаранчевий = зупинки · Фіолетовий = головна",
   installHint:"Додати на головний екран", installBtn:"Встановити"
 },
 sk: {
@@ -553,6 +560,7 @@ sk: {
   closeSoon:"Jedáleň sa zatvára o menej ako 30 minút!",
   todayNoMenu:"Menu na dnes ešte nie je načítané.",
   weatherLoading:"Načítavam počasie…",
+    youAreHere:"Si tu", geoBtn:"Moja poloha", geoDenied:"Nepodarilo sa získať polohu — povoľ GPS v nastaveniach prehliadača.", mapLegend:"Modrá = fakulty · Zelená = služby · Oranžová = zastávky · Fialová = hlavná budova",
   installHint:"Pridať na plochu pre rýchly prístup", installBtn:"Inštalovať"
 }
 };
@@ -1002,6 +1010,8 @@ function initMap(){
     map = L.map('map').setView([48.7250, 21.2530], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
     mapReady = true;
+    addCampusMarkersToMap();
+    enableGeolocation();
   } catch (e) {
     console.warn('Map unavailable:', e);
     document.getElementById('map').style.display = 'none';
@@ -1078,12 +1088,23 @@ const QUICK_LINKS = [
   { icon:'🗺️', key:'Kampus', url:'https://www.google.com/maps/search/?api=1&query=Technická+univerzita+Košice' }
 ];
 const CAMPUS_POINTS = [
-  { name:'Jedáleň Němcovej', addr:'B. Němcovej 1', lat:48.7305, lng:21.2458 },
-  { name:'Univerzitná knižnica', addr:'B. Němcovej 7', lat:48.7300, lng:21.2455 },
-  { name:'Hlavná budova TUKE', addr:'Letná 9', lat:48.7312, lng:21.2450 },
-  { name:'PK – Potiská', addr:'Němcovej', lat:48.7295, lng:21.2470 },
-  { name:'Zastávka Botanická', addr:'DPMK', lat:48.7330, lng:21.2430 },
-  { name:'Zastávka Technická univerzita', addr:'DPMK', lat:48.7308, lng:21.2485 }
+  /* Main campus Letná / Němcovej */
+  { name:'Hlavná budova TUKE', addr:'Letná 1/9', lat:48.7308, lng:21.2463, kind:'main', emoji:'🏛️' },
+  { name:'FEI – Elektrotechnika a informatika', addr:'Letná 9', lat:48.7310, lng:21.2458, kind:'faculty', emoji:'💻' },
+  { name:'SjF – Strojnícka fakulta', addr:'Letná 9', lat:48.7309, lng:21.2468, kind:'faculty', emoji:'⚙️' },
+  { name:'FBERG – Baníctvo / geotechnológie', addr:'Letná 9, blok A', lat:48.7313, lng:21.2455, kind:'faculty', emoji:'⛏️' },
+  { name:'FMMR – Materiály, metalurgia, recyklácia', addr:'Letná 9', lat:48.7306, lng:21.2472, kind:'faculty', emoji:'🔩' },
+  { name:'EkF – Ekonomická fakulta', addr:'Nemcovej / Letná', lat:48.7302, lng:21.2460, kind:'faculty', emoji:'📊' },
+  { name:'FU – Fakulta umení', addr:'Letná 9', lat:48.7305, lng:21.2453, kind:'faculty', emoji:'🎨' },
+  { name:'SvF – Stavebná fakulta', addr:'Vysokoškolská 4', lat:48.7285, lng:21.2505, kind:'faculty', emoji:'🏗️' },
+  { name:'LF – Letecká fakulta', addr:'Rampová 7', lat:48.6635, lng:21.2410, kind:'faculty', emoji:'✈️' },
+  { name:'FVT – Výrobné technológie (Prešov)', addr:'Bayerova 1, Prešov', lat:48.9980, lng:21.2395, kind:'faculty', emoji:'🏭' },
+  /* Services */
+  { name:'Jedáleň Němcovej', addr:'B. Němcovej 1', lat:48.7305, lng:21.2458, kind:'service', emoji:'🍲' },
+  { name:'Univerzitná knižnica', addr:'B. Němcovej 7', lat:48.7300, lng:21.2455, kind:'service', emoji:'📚' },
+  { name:'ŠD Němcovej', addr:'B. Němcovej', lat:48.7290, lng:21.2445, kind:'service', emoji:'🛏️' },
+  { name:'Zastávka Botanická záhrada', addr:'DPMK', lat:48.7330, lng:21.2430, kind:'stop', emoji:'🚌' },
+  { name:'Zastávka Technická univerzita', addr:'DPMK', lat:48.7308, lng:21.2485, kind:'stop', emoji:'🚌' }
 ];
 const BUS_LINKS = [
   { name:'19 → TUKE', url:'https://imhd.sk/ke/cestovny-poriadok/19' },
@@ -1104,10 +1125,57 @@ function renderCampus(){
   if (!el) return;
   el.innerHTML = CAMPUS_POINTS.map(p => `
     <div class="campus-item">
-      <div><strong>${escapeHtml(p.name)}</strong><div class="muted" style="font-size:.75rem">📍 ${escapeHtml(p.addr)}</div></div>
+      <div>
+        <strong>${p.emoji || ''} ${escapeHtml(p.name)}</strong>
+        <div class="muted" style="font-size:.75rem">📍 ${escapeHtml(p.addr)}</div>
+      </div>
       <div class="nav-btns">${navLinks(p.lat, p.lng)}</div>
     </div>`).join('');
 }
+
+function campusIcon(kind) {
+  const colors = { faculty:'#2563eb', service:'#10b981', stop:'#f59e0b', main:'#7c3aed' };
+  const c = colors[kind] || '#64748b';
+  return L.divIcon({
+    className: '',
+    html: `<div style="background:${c};width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)"></div>`,
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+}
+
+function addCampusMarkersToMap(){
+  if (!map || !mapReady) return;
+  CAMPUS_POINTS.forEach(p => {
+    if (p.lat == null || p.lng == null) return;
+    // Skip Prešov on main Košice-focused zoom — still in list
+    L.marker([p.lat, p.lng], { icon: campusIcon(p.kind) })
+      .addTo(map)
+      .bindPopup(`<b>${escapeHtml((p.emoji||'') + ' ' + p.name)}</b><br>${escapeHtml(p.addr)}`);
+  });
+}
+
+function enableGeolocation(){
+  if (!map || !mapReady || !navigator.geolocation) return;
+  const btn = document.getElementById('geo-btn');
+  const doLocate = () => {
+    if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    map.locate({ setView: true, maxZoom: 16, enableHighAccuracy: true });
+  };
+  map.on('locationfound', (e) => {
+    if (window._userMarker) map.removeLayer(window._userMarker);
+    window._userMarker = L.circleMarker(e.latlng, {
+      radius: 10, color: '#2563eb', fillColor: '#60a5fa', fillOpacity: 0.85, weight: 3
+    }).addTo(map).bindPopup(t('youAreHere') || 'You are here').openPopup();
+    if (btn) { btn.disabled = false; btn.textContent = '📍'; }
+  });
+  map.on('locationerror', () => {
+    alert(t('geoDenied') || 'Geolocation denied or unavailable');
+    if (btn) { btn.disabled = false; btn.textContent = '📍'; }
+  });
+  if (btn) btn.onclick = doLocate;
+}
+
 function renderBuses(){
   const el = document.getElementById('bus-list');
   if (!el) return;
