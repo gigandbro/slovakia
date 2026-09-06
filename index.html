@@ -241,6 +241,17 @@
   .install-card h3{margin:0 0 .4rem;font-size:.9rem;display:flex;align-items:center;gap:.4rem}
   .install-card ol{margin:.4rem 0 0;padding-left:1.1rem;font-size:.75rem;color:var(--muted);line-height:1.45}
   .install-card li{margin:.2rem 0}
+
+  .install-actions{margin-top:.75rem;display:flex;flex-direction:column;gap:.4rem}
+  .install-actions .btn{width:100%;min-height:44px;font-size:.8rem}
+  .ios-guide{
+    display:none;margin-top:.6rem;padding:.65rem .75rem;border-radius:.6rem;
+    background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);
+    font-size:.75rem;color:var(--slate-200);line-height:1.4;text-align:left;
+  }
+  .ios-guide.show{display:block;animation:fadeUp .35s ease both}
+  [data-theme="light"] .ios-guide{color:#1e293b}
+
   .support-note{font-size:.75rem;color:var(--muted);margin:0 auto 1.25rem;max-width:28rem;line-height:1.4}
   .credit-line{
     margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);
@@ -482,6 +493,10 @@
           <li data-i18n="androidStep2"></li>
           <li data-i18n="androidStep3"></li>
         </ol>
+        <div class="install-actions">
+          <button type="button" class="btn btn-primary" id="android-install-btn" data-i18n="androidInstallBtn">Install app</button>
+          <button type="button" class="btn btn-ghost" id="android-copy-btn" data-i18n="copyLinkBtn">Copy link</button>
+        </div>
       </div>
       <div class="install-card">
         <h3>🍎 iPhone / iPad</h3>
@@ -490,6 +505,11 @@
           <li data-i18n="iosStep2"></li>
           <li data-i18n="iosStep3"></li>
         </ol>
+        <div class="install-actions">
+          <button type="button" class="btn btn-primary" id="ios-guide-btn" data-i18n="iosInstallBtn">How to add icon</button>
+          <button type="button" class="btn btn-ghost" id="ios-copy-btn" data-i18n="copyLinkBtn">Copy link</button>
+        </div>
+        <div class="ios-guide" id="ios-guide" data-i18n="iosGuideDetail"></div>
       </div>
     </div>
     <p class="support-note" data-i18n="deviceSupport"></p>
@@ -548,6 +568,10 @@ en: {
   weatherLoading:"Loading weather…",
           shareBtn:"Share", shareMenuTitle:"TUKE canteen menu", offlineBanner:"You're offline — showing last saved data",
   newsOnlyNovinky:"Novinky only", sectionCollapse:"Collapse",
+    androidInstallBtn:"⚡ Install app now", iosInstallBtn:"Show how to add icon", copyLinkBtn:"Copy page link",
+  iosGuideDetail:"1) Open this page in Safari → 2) Tap the Share button (square with arrow) at the bottom → 3) Scroll and tap «Add to Home Screen» → 4) Tap Add. Apple does not allow one-tap install from websites.",
+  androidInstallHint:"If the button does nothing, use Chrome menu ⋮ → Install app.",
+  linkCopied:"Link copied",
   headingInstall:"Install on your phone",
   androidStep1:"Open this site in Chrome",
   androidStep2:"Menu ⋮ → Install app / Add to Home screen",
@@ -607,6 +631,10 @@ ru: {
   weatherLoading:"Загрузка погоды…",
           shareBtn:"Поделиться", shareMenuTitle:"Меню столовой TUKE", offlineBanner:"Нет сети — показано последнее сохранённое",
   newsOnlyNovinky:"Только Novinky", sectionCollapse:"Свернуть",
+    androidInstallBtn:"⚡ Установить сейчас", iosInstallBtn:"Как добавить иконку", copyLinkBtn:"Скопировать ссылку",
+  iosGuideDetail:"1) Открой эту страницу в Safari → 2) Нажми «Поделиться» (квадрат со стрелкой) внизу → 3) «На экран „Домой“» → 4) «Добавить». Apple не разрешает установку одной кнопкой с сайта.",
+  androidInstallHint:"Если кнопка не сработала: Chrome → меню ⋮ → «Установить приложение».",
+  linkCopied:"Ссылка скопирована",
   headingInstall:"Установить на телефон",
   androidStep1:"Открой сайт в Chrome",
   androidStep2:"Меню ⋮ → «Установить приложение» / «На главный экран»",
@@ -666,6 +694,10 @@ uk: {
   weatherLoading:"Завантаження погоди…",
           shareBtn:"Поділитися", shareMenuTitle:"Меню їдальні TUKE", offlineBanner:"Немає мережі — показано останнє збережене",
   newsOnlyNovinky:"Тільки Novinky", sectionCollapse:"Згорнути",
+    androidInstallBtn:"⚡ Встановити зараз", iosInstallBtn:"Як додати іконку", copyLinkBtn:"Скопіювати посилання",
+  iosGuideDetail:"1) Відкрий цю сторінку в Safari → 2) Натисни «Поділитися» (квадрат зі стрілкою) внизу → 3) «На екран „Домівки“» → 4) «Додати». Apple не дозволяє встановлення однією кнопкою з сайту.",
+  androidInstallHint:"Якщо кнопка не спрацювала: Chrome → меню ⋮ → «Встановити застосунок».",
+  linkCopied:"Посилання скопійовано",
   headingInstall:"Встановити на телефон",
   androidStep1:"Відкрий сайт у Chrome",
   androidStep2:"Меню ⋮ → «Встановити застосунок» / «На головний екран»",
@@ -725,6 +757,10 @@ sk: {
   weatherLoading:"Načítavam počasie…",
           shareBtn:"Zdieľať", shareMenuTitle:"Menu jedálne TUKE", offlineBanner:"Ste offline — zobrazujú sa posledné uložené údaje",
   newsOnlyNovinky:"Len Novinky", sectionCollapse:"Zbaliť",
+    androidInstallBtn:"⚡ Inštalovať teraz", iosInstallBtn:"Ako pridať ikonu", copyLinkBtn:"Kopírovať odkaz",
+  iosGuideDetail:"1) Otvor túto stránku v Safari → 2) Klepni na Zdieľať (štvorec so šípkou) dole → 3) «Pridať na plochu» → 4) Pridať. Apple nedovoľuje inštaláciu jedným ťuknutím zo stránky.",
+  androidInstallHint:"Ak tlačidlo nereaguje: Chrome → menu ⋮ → Inštalovať aplikáciu.",
+  linkCopied:"Odkaz skopírovaný",
   headingInstall:"Inštalácia do telefónu",
   androidStep1:"Otvor stránku v Chrome",
   androidStep2:"Menu ⋮ → Inštalovať aplikáciu / Pridať na plochu",
@@ -1702,7 +1738,7 @@ init();
   </div>
 </div>
 <script>
-/* PWA install + service worker */
+/* PWA install + service worker + footer install buttons */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -1710,21 +1746,53 @@ if ('serviceWorker' in navigator) {
 }
 let deferredPrompt = null;
 const banner = document.getElementById('install-banner');
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (!localStorage.getItem('tuke-hub:hide-install')) banner.classList.add('show');
-});
-document.getElementById('install-btn')?.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
+
+async function promptPwaInstall() {
+  if (!deferredPrompt) {
+    const msg = (typeof t === 'function' ? t('androidInstallHint') : null) || 'Chrome → ⋮ → Install app';
+    alert(msg);
+    return false;
+  }
   deferredPrompt.prompt();
   await deferredPrompt.userChoice;
   deferredPrompt = null;
-  banner.classList.remove('show');
+  banner?.classList.remove('show');
+  return true;
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('tuke-hub:hide-install')) banner?.classList.add('show');
+  const ab = document.getElementById('android-install-btn');
+  if (ab) ab.classList.add('btn-primary');
 });
+
+document.getElementById('install-btn')?.addEventListener('click', () => promptPwaInstall());
+document.getElementById('android-install-btn')?.addEventListener('click', () => promptPwaInstall());
+
 document.getElementById('install-dismiss')?.addEventListener('click', () => {
   localStorage.setItem('tuke-hub:hide-install', '1');
-  banner.classList.remove('show');
+  banner?.classList.remove('show');
+});
+
+async function copyPageLink() {
+  try {
+    await navigator.clipboard.writeText(location.href);
+    alert((typeof t === 'function' ? t('linkCopied') : null) || 'OK');
+  } catch (e) {
+    prompt('URL', location.href);
+  }
+}
+document.getElementById('android-copy-btn')?.addEventListener('click', copyPageLink);
+document.getElementById('ios-copy-btn')?.addEventListener('click', copyPageLink);
+
+document.getElementById('ios-guide-btn')?.addEventListener('click', () => {
+  const g = document.getElementById('ios-guide');
+  if (!g) return;
+  const show = !g.classList.contains('show');
+  g.classList.toggle('show', show);
+  if (show && typeof t === 'function') g.textContent = t('iosGuideDetail');
 });
 </script>
 </body>
