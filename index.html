@@ -1417,7 +1417,12 @@ function parseRss(xmlText) {
   const items = [...doc.querySelectorAll('item')].slice(0, 8);
   return items.map((it, i) => {
     const title = (it.querySelector('title')?.textContent || '').trim();
-    const link = (it.querySelector('link')?.textContent || '').trim();
+    let link = (it.querySelector('link')?.textContent || '').trim();
+    // RSS отдаёт битые URL вида https://tuke.sk/1/sk/... → правильный путь без /1/
+    link = link
+      .replace(/^https?:\/\/tuke\.sk\/1\//i, 'https://www.tuke.sk/')
+      .replace(/^https?:\/\/www\.tuke\.sk\/1\//i, 'https://www.tuke.sk/')
+      .replace(/^https?:\/\/tuke\.sk\//i, 'https://www.tuke.sk/');
     const desc = (it.querySelector('description')?.textContent || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
     const date = it.querySelector('pubDate')?.textContent || '';
     const cat = it.querySelector('category')?.textContent || '';
