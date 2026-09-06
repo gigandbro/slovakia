@@ -189,6 +189,43 @@
     .quick-link{font-size:.65rem;padding:.55rem .3rem;min-height:58px}
   }
 
+
+  /* Motion */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pulseSoft {
+    0%, 100% { opacity: .55; }
+    50% { opacity: 1; }
+  }
+  .anim-in { animation: fadeUp .45s ease both; }
+  .card, .menu-item, .discount-card, .dpmk-card, .campus-item, .quick-link, .news-card {
+    animation: fadeUp .4s ease both;
+  }
+  .quick-links .quick-link:nth-child(1){animation-delay:.02s}
+  .quick-links .quick-link:nth-child(2){animation-delay:.05s}
+  .quick-links .quick-link:nth-child(3){animation-delay:.08s}
+  .quick-links .quick-link:nth-child(4){animation-delay:.11s}
+  .quick-links .quick-link:nth-child(5){animation-delay:.14s}
+  .quick-links .quick-link:nth-child(6){animation-delay:.17s}
+  .news-card{background:var(--card-bg);border:1px solid var(--border);border-radius:.75rem;padding:.85rem;margin-bottom:.55rem}
+  .news-card a{color:var(--blue-400);text-decoration:none;font-weight:600}
+  .news-card a:hover{text-decoration:underline}
+  .news-meta{font-size:.7rem;color:var(--muted);margin-top:.25rem}
+  .news-desc{font-size:.8rem;color:var(--slate-300);margin:.35rem 0 0;line-height:1.35}
+  .news-actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.45rem}
+  .news-actions .btn{min-height:36px;padding:.4rem .7rem;font-size:.7rem}
+  @media (prefers-reduced-motion: reduce) {
+    .anim-in, .card, .menu-item, .discount-card, .dpmk-card, .campus-item, .quick-link, .news-card {
+      animation: none !important;
+    }
+  }
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -278,7 +315,20 @@
 
   <p class="status-sub" data-i18n="canteenSub" style="margin:-.5rem 0 1rem"></p>
 
-  <section id="menu-section">
+  
+  <section id="news-section">
+    <div class="row-between">
+      <h2 data-i18n="headingNews"></h2>
+      <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
+        <button type="button" class="btn btn-ghost" id="news-translate-btn" data-i18n="newsTranslate">Translate</button>
+        <a class="link" href="https://www.tuke.sk/sk" target="_blank" rel="noopener" data-i18n="newsAll">All news ↗</a>
+      </div>
+    </div>
+    <div id="news-list" class="anim-in"></div>
+    <p class="muted" id="news-status" style="margin-top:.35rem"></p>
+  </section>
+
+<section id="menu-section">
     <div class="row-between">
       <h2 data-i18n="headingMenu"></h2>
       <a id="official-link" class="link" href="#" target="_blank" rel="noopener" data-i18n="linkOriginal"></a>
@@ -416,7 +466,8 @@ en: {
   closeSoon:"Canteen closes in less than 30 minutes!",
   todayNoMenu:"No menu loaded for today yet.",
   weatherLoading:"Loading weather…",
-    youAreHere:"You are here", geoBtn:"My location", geoDenied:"Could not get location — allow GPS in browser settings.", mapLegend:"Blue = faculties · Green = services · Orange = stops · Purple = main building",
+      headingNews:"TUKE news", newsTranslate:"Translate to my language", newsAll:"All on tuke.sk ↗", newsLoading:"Loading news…", newsError:"Could not load news", newsTranslated:"Translated", newsOriginal:"Show original",
+  youAreHere:"You are here", geoBtn:"My location", geoDenied:"Could not get location — allow GPS in browser settings.", mapLegend:"Blue = faculties · Green = services · Orange = stops · Purple = main building",
   installHint:"Add to home screen for quick access", installBtn:"Install"
 },
 ru: {
@@ -464,7 +515,8 @@ ru: {
   closeSoon:"Столовая закроется меньше чем через 30 минут!",
   todayNoMenu:"Меню на сегодня ещё не загружено.",
   weatherLoading:"Загрузка погоды…",
-    youAreHere:"Вы здесь", geoBtn:"Моё местоположение", geoDenied:"Не удалось получить геолокацию — разрешите GPS в настройках браузера.", mapLegend:"Синий = факультеты · Зелёный = сервисы · Оранжевый = остановки · Фиолетовый = главная",
+      headingNews:"Новости TUKE", newsTranslate:"Перевести на мой язык", newsAll:"Все на tuke.sk ↗", newsLoading:"Загрузка новостей…", newsError:"Не удалось загрузить новости", newsTranslated:"Переведено", newsOriginal:"Показать оригинал",
+  youAreHere:"Вы здесь", geoBtn:"Моё местоположение", geoDenied:"Не удалось получить геолокацию — разрешите GPS в настройках браузера.", mapLegend:"Синий = факультеты · Зелёный = сервисы · Оранжевый = остановки · Фиолетовый = главная",
   installHint:"Добавить на домашний экран", installBtn:"Установить"
 },
 uk: {
@@ -512,7 +564,8 @@ uk: {
   closeSoon:"Їдальня зачиниться менше ніж за 30 хвилин!",
   todayNoMenu:"Меню на сьогодні ще не завантажено.",
   weatherLoading:"Завантаження погоди…",
-    youAreHere:"Ви тут", geoBtn:"Моє місцезнаходження", geoDenied:"Не вдалося отримати геолокацію — дозвольте GPS у налаштуваннях браузера.", mapLegend:"Синій = факультети · Зелений = сервіси · Помаранчевий = зупинки · Фіолетовий = головна",
+      headingNews:"Новини TUKE", newsTranslate:"Перекласти моєю мовою", newsAll:"Усі на tuke.sk ↗", newsLoading:"Завантаження новин…", newsError:"Не вдалося завантажити новини", newsTranslated:"Перекладено", newsOriginal:"Показати оригінал",
+  youAreHere:"Ви тут", geoBtn:"Моє місцезнаходження", geoDenied:"Не вдалося отримати геолокацію — дозвольте GPS у налаштуваннях браузера.", mapLegend:"Синій = факультети · Зелений = сервіси · Помаранчевий = зупинки · Фіолетовий = головна",
   installHint:"Додати на головний екран", installBtn:"Встановити"
 },
 sk: {
@@ -560,7 +613,8 @@ sk: {
   closeSoon:"Jedáleň sa zatvára o menej ako 30 minút!",
   todayNoMenu:"Menu na dnes ešte nie je načítané.",
   weatherLoading:"Načítavam počasie…",
-    youAreHere:"Si tu", geoBtn:"Moja poloha", geoDenied:"Nepodarilo sa získať polohu — povoľ GPS v nastaveniach prehliadača.", mapLegend:"Modrá = fakulty · Zelená = služby · Oranžová = zastávky · Fialová = hlavná budova",
+      headingNews:"Novinky TUKE", newsTranslate:"Preložiť do môjho jazyka", newsAll:"Všetko na tuke.sk ↗", newsLoading:"Načítavam novinky…", newsError:"Novinky sa nepodarilo načítať", newsTranslated:"Preložené", newsOriginal:"Zobraziť originál",
+  youAreHere:"Si tu", geoBtn:"Moja poloha", geoDenied:"Nepodarilo sa získať polohu — povoľ GPS v nastaveniach prehliadača.", mapLegend:"Modrá = fakulty · Zelená = služby · Oranžová = zastávky · Fialová = hlavná budova",
   installHint:"Pridať na plochu pre rýchly prístup", installBtn:"Inštalovať"
 }
 };
@@ -1272,6 +1326,95 @@ function renderSavings(){
 }
 
 
+
+/* ===== TUKE News RSS + optional translation ===== */
+const NEWS_FEED = 'https://api.prod.tuke.sk/feed/1/sk/articles-feed';
+let newsItems = [];
+let newsTranslated = false;
+
+function parseRss(xmlText) {
+  const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+  const items = [...doc.querySelectorAll('item')].slice(0, 8);
+  return items.map((it, i) => {
+    const title = (it.querySelector('title')?.textContent || '').trim();
+    const link = (it.querySelector('link')?.textContent || '').trim();
+    const desc = (it.querySelector('description')?.textContent || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const date = it.querySelector('pubDate')?.textContent || '';
+    const cat = it.querySelector('category')?.textContent || '';
+    return { id: i, title, link, desc, date, cat, titleTr: null, descTr: null };
+  });
+}
+
+async function translateText(text, toLang) {
+  if (!text || toLang === 'sk') return text;
+  const pair = 'sk|' + (toLang === 'uk' ? 'uk' : toLang === 'ru' ? 'ru' : 'en');
+  const url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text.slice(0, 450)) + '&langpair=' + pair;
+  const res = await fetch(url);
+  const data = await res.json();
+  const out = data?.responseData?.translatedText;
+  if (!out || /INVALID|QUERY LENGTH/i.test(out)) return text;
+  return out;
+}
+
+async function translateNewsToLang() {
+  const status = document.getElementById('news-status');
+  const btn = document.getElementById('news-translate-btn');
+  if (lang === 'sk') {
+    newsTranslated = false;
+    renderNewsList();
+    return;
+  }
+  if (btn) btn.disabled = true;
+  if (status) status.textContent = t('newsLoading');
+  for (const item of newsItems) {
+    if (!item.titleTr) item.titleTr = await translateText(item.title, lang);
+    if (!item.descTr && item.desc) item.descTr = await translateText(item.desc, lang);
+  }
+  newsTranslated = true;
+  if (btn) btn.disabled = false;
+  renderNewsList();
+  if (status) status.textContent = t('newsTranslated');
+}
+
+function renderNewsList() {
+  const el = document.getElementById('news-list');
+  if (!el) return;
+  if (!newsItems.length) {
+    el.innerHTML = `<div class="empty-box">${escapeHtml(t('newsError'))}</div>`;
+    return;
+  }
+  el.innerHTML = newsItems.map((item, idx) => {
+    const title = newsTranslated && item.titleTr ? item.titleTr : item.title;
+    const desc = newsTranslated && item.descTr ? item.descTr : item.desc;
+    const d = item.date ? new Date(item.date) : null;
+    const dateStr = d && !isNaN(d) ? d.toLocaleDateString(LOCALE_TAG[lang] || 'sk-SK', { day:'2-digit', month:'short', year:'numeric' }) : '';
+    return `<article class="news-card" style="animation-delay:${idx * 0.04}s">
+      <a href="${escapeHtml(item.link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>
+      <div class="news-meta">${escapeHtml(item.cat)}${dateStr ? ' · ' + dateStr : ''}</div>
+      ${desc ? `<p class="news-desc">${escapeHtml(desc)}</p>` : ''}
+    </article>`;
+  }).join('');
+}
+
+async function loadNews() {
+  const status = document.getElementById('news-status');
+  if (status) status.textContent = t('newsLoading');
+  try {
+    const res = await fetch(NEWS_FEED, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    newsItems = parseRss(text);
+    newsTranslated = false;
+    renderNewsList();
+    if (status) status.textContent = '';
+  } catch (e) {
+    console.warn('news', e);
+    if (status) status.textContent = t('newsError');
+    const el = document.getElementById('news-list');
+    if (el) el.innerHTML = `<div class="empty-box">${escapeHtml(t('newsError'))} <a class="link" href="https://www.tuke.sk/sk" target="_blank">tuke.sk</a></div>`;
+  }
+}
+
 async function init(){
   initTheme();
   let stored = null;
@@ -1310,9 +1453,19 @@ async function init(){
   updateClockAndStatus();
   updateCloseWarning();
   setInterval(() => { updateClockAndStatus(); updateCloseWarning(); }, 30000);
-  loadWeather();
-
-  setTimeout(initMap, 50);
+    loadWeather();
+  loadNews();
+  document.getElementById('news-translate-btn')?.addEventListener('click', () => {
+    if (newsTranslated) {
+      newsTranslated = false;
+      renderNewsList();
+      const st = document.getElementById('news-status');
+      if (st) st.textContent = '';
+    } else {
+      translateNewsToLang();
+    }
+  });
+ setTimeout(initMap, 50);
 }
 
 init();
