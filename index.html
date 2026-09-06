@@ -226,6 +226,29 @@
     }
   }
 
+
+  .app-footer{
+    margin:2.5rem 0 1.5rem;padding:1.25rem 1rem 2rem;
+    border-top:1px solid var(--border);text-align:center;
+  }
+  .app-footer h2{margin:0 0 .75rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .install-cards{display:grid;gap:.75rem;margin:0 auto 1.25rem;max-width:28rem;text-align:left}
+  @media(min-width:520px){.install-cards{grid-template-columns:1fr 1fr;max-width:36rem}}
+  .install-card{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:.85rem;
+    padding:1rem;animation:fadeUp .4s ease both;
+  }
+  .install-card h3{margin:0 0 .4rem;font-size:.9rem;display:flex;align-items:center;gap:.4rem}
+  .install-card ol{margin:.4rem 0 0;padding-left:1.1rem;font-size:.75rem;color:var(--muted);line-height:1.45}
+  .install-card li{margin:.2rem 0}
+  .support-note{font-size:.75rem;color:var(--muted);margin:0 auto 1.25rem;max-width:28rem;line-height:1.4}
+  .credit-line{
+    margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);
+    font-size:.8rem;color:var(--slate-400);letter-spacing:.02em;
+  }
+  .credit-line strong{color:var(--blue-400);font-weight:600}
+  .credit-heart{color:#f472b6}
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -416,6 +439,31 @@
     <div class="campus-grid" id="bus-list"></div>
   </section>
 
+
+  <footer class="app-footer" id="app-footer">
+    <h2 data-i18n="headingInstall"></h2>
+    <div class="install-cards">
+      <div class="install-card">
+        <h3>🤖 Android</h3>
+        <ol>
+          <li data-i18n="androidStep1"></li>
+          <li data-i18n="androidStep2"></li>
+          <li data-i18n="androidStep3"></li>
+        </ol>
+      </div>
+      <div class="install-card">
+        <h3>🍎 iPhone / iPad</h3>
+        <ol>
+          <li data-i18n="iosStep1"></li>
+          <li data-i18n="iosStep2"></li>
+          <li data-i18n="iosStep3"></li>
+        </ol>
+      </div>
+    </div>
+    <p class="support-note" data-i18n="deviceSupport"></p>
+    <p class="credit-line">made by <strong>gig</strong> via <span class="credit-heart">❤</span></p>
+  </footer>
+
 </main>
 
 
@@ -466,7 +514,15 @@ en: {
   closeSoon:"Canteen closes in less than 30 minutes!",
   todayNoMenu:"No menu loaded for today yet.",
   weatherLoading:"Loading weather…",
-      headingNews:"TUKE news", newsTranslate:"Translate to my language", newsAll:"All on tuke.sk ↗", newsLoading:"Loading news…", newsError:"Could not load news", newsTranslated:"Translated", newsOriginal:"Show original",
+        headingInstall:"Install on your phone",
+  androidStep1:"Open this site in Chrome",
+  androidStep2:"Menu ⋮ → Install app / Add to Home screen",
+  androidStep3:"Confirm — the TUKE Hub icon appears on the home screen",
+  iosStep1:"Open this site in Safari (not Chrome)",
+  iosStep2:"Tap Share □↑ → Add to Home Screen",
+  iosStep3:"Tap Add — the icon appears on the home screen",
+  deviceSupport:"Works best as a home-screen app on Android (Chrome) and iOS 16+ (Safari). Offline shell for menu & discounts is cached after first open.",
+  headingNews:"TUKE news", newsTranslate:"Translate to my language", newsAll:"All on tuke.sk ↗", newsLoading:"Loading news…", newsError:"Could not load news", newsTranslated:"Translated", newsOriginal:"Show original",
   youAreHere:"You are here", geoBtn:"My location", geoDenied:"Could not get location — allow GPS in browser settings.", mapLegend:"Blue = faculties · Green = services · Orange = stops · Purple = main building",
   installHint:"Add to home screen for quick access", installBtn:"Install"
 },
@@ -515,7 +571,15 @@ ru: {
   closeSoon:"Столовая закроется меньше чем через 30 минут!",
   todayNoMenu:"Меню на сегодня ещё не загружено.",
   weatherLoading:"Загрузка погоды…",
-      headingNews:"Новости TUKE", newsTranslate:"Перевести на мой язык", newsAll:"Все на tuke.sk ↗", newsLoading:"Загрузка новостей…", newsError:"Не удалось загрузить новости", newsTranslated:"Переведено", newsOriginal:"Показать оригинал",
+        headingInstall:"Установить на телефон",
+  androidStep1:"Открой сайт в Chrome",
+  androidStep2:"Меню ⋮ → «Установить приложение» / «На главный экран»",
+  androidStep3:"Подтверди — иконка TUKE Hub появится на экране",
+  iosStep1:"Открой сайт в Safari (не в Chrome)",
+  iosStep2:"Кнопка «Поделиться» □↑ → «На экран „Домой“»",
+  iosStep3:"Нажми «Добавить» — иконка появится на экране",
+  deviceSupport:"Лучше всего работает как приложение с домашнего экрана: Android (Chrome) и iOS 16+ (Safari). Меню и скидки кэшируются после первого открытия.",
+  headingNews:"Новости TUKE", newsTranslate:"Перевести на мой язык", newsAll:"Все на tuke.sk ↗", newsLoading:"Загрузка новостей…", newsError:"Не удалось загрузить новости", newsTranslated:"Переведено", newsOriginal:"Показать оригинал",
   youAreHere:"Вы здесь", geoBtn:"Моё местоположение", geoDenied:"Не удалось получить геолокацию — разрешите GPS в настройках браузера.", mapLegend:"Синий = факультеты · Зелёный = сервисы · Оранжевый = остановки · Фиолетовый = главная",
   installHint:"Добавить на домашний экран", installBtn:"Установить"
 },
@@ -564,7 +628,15 @@ uk: {
   closeSoon:"Їдальня зачиниться менше ніж за 30 хвилин!",
   todayNoMenu:"Меню на сьогодні ще не завантажено.",
   weatherLoading:"Завантаження погоди…",
-      headingNews:"Новини TUKE", newsTranslate:"Перекласти моєю мовою", newsAll:"Усі на tuke.sk ↗", newsLoading:"Завантаження новин…", newsError:"Не вдалося завантажити новини", newsTranslated:"Перекладено", newsOriginal:"Показати оригінал",
+        headingInstall:"Встановити на телефон",
+  androidStep1:"Відкрий сайт у Chrome",
+  androidStep2:"Меню ⋮ → «Встановити застосунок» / «На головний екран»",
+  androidStep3:"Підтверди — іконка TUKE Hub з’явиться на екрані",
+  iosStep1:"Відкрий сайт у Safari (не в Chrome)",
+  iosStep2:"Кнопка «Поділитися» □↑ → «На екран „Домівки“»",
+  iosStep3:"Натисни «Додати» — іконка з’явиться на екрані",
+  deviceSupport:"Найкраще працює як застосунок з головного екрана: Android (Chrome) та iOS 16+ (Safari). Меню і знижки кешуються після першого відкриття.",
+  headingNews:"Новини TUKE", newsTranslate:"Перекласти моєю мовою", newsAll:"Усі на tuke.sk ↗", newsLoading:"Завантаження новин…", newsError:"Не вдалося завантажити новини", newsTranslated:"Перекладено", newsOriginal:"Показати оригінал",
   youAreHere:"Ви тут", geoBtn:"Моє місцезнаходження", geoDenied:"Не вдалося отримати геолокацію — дозвольте GPS у налаштуваннях браузера.", mapLegend:"Синій = факультети · Зелений = сервіси · Помаранчевий = зупинки · Фіолетовий = головна",
   installHint:"Додати на головний екран", installBtn:"Встановити"
 },
@@ -613,7 +685,15 @@ sk: {
   closeSoon:"Jedáleň sa zatvára o menej ako 30 minút!",
   todayNoMenu:"Menu na dnes ešte nie je načítané.",
   weatherLoading:"Načítavam počasie…",
-      headingNews:"Novinky TUKE", newsTranslate:"Preložiť do môjho jazyka", newsAll:"Všetko na tuke.sk ↗", newsLoading:"Načítavam novinky…", newsError:"Novinky sa nepodarilo načítať", newsTranslated:"Preložené", newsOriginal:"Zobraziť originál",
+        headingInstall:"Inštalácia do telefónu",
+  androidStep1:"Otvor stránku v Chrome",
+  androidStep2:"Menu ⋮ → Inštalovať aplikáciu / Pridať na plochu",
+  androidStep3:"Potvrď — ikona TUKE Hub sa objaví na ploche",
+  iosStep1:"Otvor stránku v Safari (nie v Chrome)",
+  iosStep2:"Tlačidlo Zdieľať □↑ → Pridať na plochu",
+  iosStep3:"Klepni na Pridať — ikona sa objaví na ploche",
+  deviceSupport:"Najlepšie funguje ako aplikácia z plochy: Android (Chrome) a iOS 16+ (Safari). Menu a zľavy sa po prvom otvorení uložia do cache.",
+  headingNews:"Novinky TUKE", newsTranslate:"Preložiť do môjho jazyka", newsAll:"Všetko na tuke.sk ↗", newsLoading:"Načítavam novinky…", newsError:"Novinky sa nepodarilo načítať", newsTranslated:"Preložené", newsOriginal:"Zobraziť originál",
   youAreHere:"Si tu", geoBtn:"Moja poloha", geoDenied:"Nepodarilo sa získať polohu — povoľ GPS v nastaveniach prehliadača.", mapLegend:"Modrá = fakulty · Zelená = služby · Oranžová = zastávky · Fialová = hlavná budova",
   installHint:"Pridať na plochu pre rýchly prístup", installBtn:"Inštalovať"
 }
