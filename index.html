@@ -2,8 +2,20 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0f172a">
+<meta name="color-scheme" content="dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TUKE Hub">
+<meta name="application-name" content="TUKE Hub">
+<meta name="format-detection" content="telephone=no">
 <title>TUKE Student Hub</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-192.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -17,10 +29,35 @@
     --blue-300:#93c5fd;--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;
     --emerald-300:#6ee7b7;--emerald-400:#34d399;--emerald-500:#10b981;
     --amber-400:#fbbf24;--purple-400:#c084fc;--red-400:#f87171;
+    --card-bg:var(--slate-800);--page-bg:var(--slate-900);--text:var(--slate-100);--muted:var(--slate-400);
+    --border:var(--slate-700);--header-bg:rgba(30,41,59,.92);
   }
-  body{background:var(--slate-900);color:var(--slate-100);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;line-height:1.4}
-  .wrap{max-width:44rem;margin:0 auto;padding:0 1rem}
-  header{background:rgba(30,41,59,.85);backdrop-filter:blur(8px);border-bottom:1px solid var(--slate-700);position:sticky;top:0;z-index:40}
+  [data-theme="light"]{
+    --slate-100:#0f172a;--slate-200:#1e293b;--slate-300:#334155;--slate-400:#475569;
+    --slate-500:#64748b;--slate-600:#94a3b8;--slate-700:#cbd5e1;--slate-800:#f1f5f9;--slate-900:#ffffff;
+    --blue-300:#1d4ed8;--blue-400:#2563eb;--blue-500:#3b82f6;--blue-600:#2563eb;
+    --emerald-300:#047857;--emerald-400:#059669;--emerald-500:#10b981;
+    --card-bg:#f8fafc;--page-bg:#f1f5f9;--text:#0f172a;--muted:#64748b;
+    --border:#e2e8f0;--header-bg:rgba(255,255,255,.92);
+  }
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{
+    background:var(--page-bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;min-height:100dvh;line-height:1.4;
+    padding-top:env(safe-area-inset-top);
+    padding-bottom:env(safe-area-inset-bottom);
+    padding-left:env(safe-area-inset-left);
+    padding-right:env(safe-area-inset-right);
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior-y:contain;
+  }
+  .wrap{max-width:44rem;margin:0 auto;padding:0 max(1rem, env(safe-area-inset-left)) 0 max(1rem, env(safe-area-inset-right))}
+  header{
+    background:rgba(30,41,59,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--slate-700);position:sticky;top:0;z-index:40;
+    padding-top:env(safe-area-inset-top);
+  }
   .header-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.75rem 0}
   .brand{display:flex;align-items:center;gap:.5rem}
   .logo{background:var(--blue-600);color:#fff;font-weight:700;padding:.5rem;border-radius:.5rem;font-size:.7rem}
@@ -44,7 +81,9 @@
   .badge.open{background:rgba(16,185,129,.18);color:var(--emerald-300);border:1px solid rgba(16,185,129,.3)}
   .badge.closed{background:rgba(248,113,113,.15);color:var(--red-400);border:1px solid rgba(248,113,113,.3)}
   .status-sub{font-size:.75rem;color:var(--slate-400);margin-top:.3rem}
-  .btn{font-size:.75rem;font-weight:600;padding:.5rem 1rem;border-radius:.5rem;transition:background .15s}
+  .btn{font-size:.8rem;font-weight:600;padding:.65rem 1.1rem;border-radius:.6rem;transition:background .15s,transform .1s;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+  .btn:active{transform:scale(.97)}
+  .lang-btn{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
   .btn-primary{background:var(--blue-600);color:#fff}
   .btn-primary:hover{background:var(--blue-500)}
   .btn-ghost{background:var(--slate-700);color:var(--slate-100)}
@@ -55,7 +94,8 @@
   .chip-row{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.25rem;-webkit-overflow-scrolling:touch}
   .chip-row::-webkit-scrollbar{height:6px}
   .chip-row::-webkit-scrollbar-thumb{background:var(--slate-600);border-radius:3px}
-  .chip{flex-shrink:0;font-size:.75rem;font-weight:500;padding:.4rem .75rem;border-radius:.5rem;border:1px solid var(--slate-700);background:var(--slate-800);color:var(--slate-300);white-space:nowrap}
+  .chip{flex-shrink:0;font-size:.8rem;font-weight:500;padding:.55rem .9rem;border-radius:.55rem;border:1px solid var(--slate-700);background:var(--slate-800);color:var(--slate-300);white-space:nowrap;min-height:40px;display:inline-flex;align-items:center}
+  .chip:active{transform:scale(.97)}
   .chip.active{background:var(--blue-600);border-color:var(--blue-600);color:#fff;font-weight:600}
 
   .row-between{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
@@ -78,8 +118,9 @@
 
   .discount-card{background:rgba(30,41,59,.6);border:1px solid rgba(51,65,85,.6);border-radius:.75rem;padding:1rem;display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start;margin-bottom:.6rem}
   .discount-tag{font-size:.65rem;background:rgba(59,130,246,.2);color:var(--blue-300);border:1px solid rgba(59,130,246,.3);padding:.1rem .5rem;border-radius:999px}
-  .fav-btn{font-size:1.2rem;color:var(--slate-600);flex-shrink:0}
+  .fav-btn{font-size:1.35rem;color:var(--slate-600);flex-shrink:0;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:.5rem}
   .fav-btn.active{color:var(--amber-400)}
+  .fav-btn:active{background:var(--slate-700)}
   .nav-btns{display:flex;gap:.35rem;margin-top:.4rem;flex-wrap:wrap}
   .nav-btn{font-size:.65rem;padding:.25rem .5rem;border-radius:.35rem;background:var(--slate-700);color:var(--slate-200);text-decoration:none;display:inline-flex;align-items:center;gap:.25rem}
   .nav-btn:hover{background:var(--blue-600);color:#fff}
@@ -105,6 +146,77 @@
   .modal-box{background:var(--slate-800);border:1px solid var(--slate-700);border-radius:.75rem;padding:1rem;width:92vw;max-width:32rem;margin:4rem auto 0}
   textarea{width:100%;background:var(--slate-900);border:1px solid var(--slate-700);border-radius:.5rem;padding:.5rem;font-size:.75rem;color:var(--slate-200);font-family:ui-monospace,Menlo,Consolas,monospace}
   textarea:focus{outline:none;box-shadow:0 0 0 2px var(--blue-500)}
+
+
+  .quick-links{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.25rem}
+  .quick-link{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;
+    background:var(--card-bg);border:1px solid var(--border);border-radius:.75rem;padding:.7rem .4rem;
+    text-decoration:none;color:var(--text);font-size:.7rem;font-weight:600;min-height:64px;text-align:center}
+  .quick-link:active{transform:scale(.97);background:var(--slate-700)}
+  .quick-link span.qi{font-size:1.25rem;line-height:1}
+  .today-grid{display:grid;gap:.75rem;margin-bottom:1.25rem}
+  @media(min-width:560px){.today-grid{grid-template-columns:1.2fr .8fr}}
+  .today-card h3{margin:0 0 .4rem;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+  .today-dishes{font-size:.85rem;margin:0;padding:0;list-style:none}
+  .today-dishes li{display:flex;justify-content:space-between;gap:.5rem;padding:.25rem 0;border-bottom:1px solid var(--border)}
+  .today-dishes li:last-child{border:none}
+  .weather-row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+  .weather-now{font-size:1.6rem;font-weight:700}
+  .weather-sub{font-size:.75rem;color:var(--muted)}
+  .close-warn{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.35);color:var(--amber-400);
+    border-radius:.5rem;padding:.5rem .75rem;font-size:.8rem;font-weight:600;margin-top:.5rem;display:none}
+  .close-warn.show{display:block}
+  .theme-btn{min-width:44px;min-height:44px;border-radius:.5rem;font-size:1.1rem;opacity:.85}
+  .theme-btn:active{background:var(--slate-700)}
+  .toggle-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem}
+  .toggle-chip{font-size:.75rem;padding:.4rem .7rem;border-radius:999px;border:1px solid var(--border);
+    background:var(--card-bg);color:var(--muted);cursor:pointer;min-height:36px}
+  .toggle-chip.active{background:var(--blue-600);border-color:var(--blue-600);color:#fff;font-weight:600}
+  .fav-section{margin-bottom:1rem}
+  .campus-grid{display:grid;gap:.5rem}
+  .campus-item{display:flex;justify-content:space-between;align-items:center;gap:.5rem;
+    background:var(--card-bg);border:1px solid var(--border);border-radius:.75rem;padding:.75rem}
+  .savings-grid{display:grid;gap:.5rem}
+  .savings-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+  .savings-row input{width:5rem;background:var(--slate-900);border:1px solid var(--border);border-radius:.5rem;padding:.4rem;color:var(--text);font-size:16px}
+  [data-theme="light"] .savings-row input,[data-theme="light"] input[type=text],[data-theme="light"] input[type=number]{background:#fff;color:#0f172a}
+  [data-theme="light"] .card,[data-theme="light"] .menu-item,[data-theme="light"] .discount-card,[data-theme="light"] .dpmk-card,[data-theme="light"] .quick-link,[data-theme="light"] .campus-item{background:var(--card-bg);border-color:var(--border)}
+  [data-theme="light"] header{background:var(--header-bg);border-color:var(--border)}
+  [data-theme="light"] .chip{background:#fff;border-color:var(--border);color:#334155}
+  [data-theme="light"] .chip.active{background:var(--blue-600);color:#fff;border-color:var(--blue-600)}
+  @media(max-width:480px){
+    .quick-links{grid-template-columns:repeat(3,1fr);gap:.4rem}
+    .quick-link{font-size:.65rem;padding:.55rem .3rem;min-height:58px}
+  }
+
+  /* Mobile polish */
+  @media (max-width: 480px) {
+    .brand h1{font-size:.95rem}
+    .logo{font-size:.65rem;padding:.4rem}
+    .clock{font-size:.7rem}
+    .clock b{font-size:.85rem}
+    .status-card{flex-direction:column;align-items:flex-start}
+    .menu-item,.discount-card{padding:.85rem}
+    .price{font-size:1rem}
+    #map{height:14rem !important;border-radius:.75rem}
+    .nav-btn{padding:.4rem .65rem;font-size:.7rem;min-height:36px}
+    input[type=text],input[type=number]{font-size:16px !important} /* prevent iOS zoom */
+  }
+  @media (max-width: 360px) {
+    .lang-switch{gap:0}
+    .header-row{gap:.4rem}
+  }
+  /* Install banner */
+  .install-banner{
+    display:none;position:fixed;left:max(.75rem, env(safe-area-inset-left));right:max(.75rem, env(safe-area-inset-right));
+    bottom:max(.75rem, env(safe-area-inset-bottom));z-index:50;
+    background:var(--slate-800);border:1px solid var(--slate-600);border-radius:1rem;
+    padding:.85rem 1rem;box-shadow:0 10px 40px rgba(0,0,0,.45);
+    align-items:center;justify-content:space-between;gap:.75rem;
+  }
+  .install-banner.show{display:flex}
+  .install-banner p{margin:0;font-size:.8rem;color:var(--slate-200);line-height:1.3}
+  .install-banner .btn{flex-shrink:0}
 </style>
 </head>
 <body>
@@ -116,6 +228,7 @@
       <h1>Kosice Student Hub</h1>
     </div>
     <div class="header-right">
+      <button type="button" class="theme-btn" id="theme-btn" title="Theme">☀️</button>
       <div class="clock">
         <span data-i18n="clockLabel"></span>
         <b id="clock-time">--:--</b>
@@ -132,16 +245,38 @@
 
 <main class="wrap">
 
-  <section class="card status-card">
-    <div>
-      <div class="status-title">
-        <h2>Jedáleň Němcovej</h2>
+  <!-- Quick links -->
+  <section style="margin-top:1rem">
+    <h2 data-i18n="headingQuick"></h2>
+    <div class="quick-links" id="quick-links"></div>
+  </section>
+
+  <!-- Today + Weather -->
+  <section class="today-grid">
+    <div class="card today-card">
+      <h3 data-i18n="headingToday"></h3>
+      <div class="status-title" style="margin-bottom:.35rem">
+        <span style="font-weight:700">Jedáleň Němcovej</span>
         <span id="open-badge" class="badge closed">…</span>
       </div>
-      <p class="status-sub" id="status-sub">…</p>
-      <p class="status-sub" data-i18n="canteenSub"></p>
+      <p class="status-sub" id="status-sub" style="margin:0">…</p>
+      <div class="close-warn" id="close-warn"></div>
+      <ul class="today-dishes" id="today-dishes"></ul>
+      <p class="muted" id="today-empty" style="display:none;margin:.4rem 0 0;font-size:.8rem"></p>
+    </div>
+    <div class="card today-card">
+      <h3 data-i18n="headingWeather"></h3>
+      <div class="weather-row">
+        <div>
+          <div class="weather-now" id="weather-temp">—</div>
+          <div class="weather-sub" id="weather-desc">…</div>
+        </div>
+        <div class="weather-sub" id="weather-daily" style="flex:1"></div>
+      </div>
     </div>
   </section>
+
+  <p class="status-sub" data-i18n="canteenSub" style="margin:-.5rem 0 1rem"></p>
 
   <section id="menu-section">
     <div class="row-between">
@@ -187,17 +322,44 @@
 
     <input type="text" id="discount-search" style="margin-bottom:.75rem">
 
+    <div class="toggle-row">
+      <button type="button" class="toggle-chip" id="kosice-only-btn" data-i18n="filterKosice">Košice only</button>
+    </div>
     <div id="category-filter" class="chip-row" style="margin-bottom:.75rem"></div>
+
+    <div class="fav-section" id="fav-section" style="display:none">
+      <h2 data-i18n="headingFavs" style="margin-bottom:.4rem"></h2>
+      <div id="fav-list"></div>
+    </div>
 
     <div id="discounts-list"></div>
     <p class="empty-box" id="discounts-empty" style="display:none"></p>
     <p class="muted" id="discounts-source-note" style="margin-top:.5rem"></p>
   </section>
 
+  <section id="savings-section">
+    <h2 data-i18n="headingSavings"></h2>
+    <div class="card savings-grid">
+      <p class="muted" style="margin:0" data-i18n="savingsDesc"></p>
+      <div class="savings-row"><label data-i18n="savMeals"></label><input type="number" id="sav-meals" min="0" value="15" step="1"></div>
+      <div class="savings-row"><label data-i18n="savMealEur"></label><input type="number" id="sav-meal-eur" min="0" value="2" step="0.5"></div>
+      <div class="savings-row"><label data-i18n="savTransport"></label><input type="number" id="sav-transport" min="0" value="8" step="1"></div>
+      <div class="savings-row"><label data-i18n="savOther"></label><input type="number" id="sav-other" min="0" value="5" step="1"></div>
+      <div class="calc-result"><span data-i18n="savTotal"></span> <strong id="sav-total">0 €</strong></div>
+    </div>
+  </section>
+
+  <section id="campus-section">
+    <h2 data-i18n="headingCampus"></h2>
+    <div class="campus-grid" id="campus-list"></div>
+  </section>
+
   <section id="dpmk-section">
     <h2 data-i18n="headingDPMK"></h2>
     <div id="dpmk-list"></div>
     <p class="muted" style="margin-top:.5rem" data-i18n="dpmkNote"></p>
+    <h2 style="margin-top:1rem" data-i18n="headingBuses"></h2>
+    <div class="campus-grid" id="bus-list"></div>
   </section>
 
 </main>
@@ -240,7 +402,17 @@ en: {
   headingDPMK:"Public Transport (DPMK)", dpmkNote:"Show your ISIC for discounted student fares. Timetables open in a new tab.",
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
-  linesLabel:"Lines:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze"
+  linesLabel:"Lines:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
+    headingQuick:"Quick links", headingToday:"Today", headingWeather:"Weather Košice",
+  headingFavs:"My favorites", filterKosice:"Košice only", headingSavings:"Monthly savings",
+  savingsDesc:"Rough estimate of what you can save with ISIC per month.",
+  savMeals:"Canteen visits / month", savMealEur:"Subsidy per meal (€)", savTransport:"Transport save (€)",
+  savOther:"Other (cinema, books…) €", savTotal:"≈ saved per month:",
+  headingCampus:"Campus map points", headingBuses:"Buses to campus",
+  closeSoon:"Canteen closes in less than 30 minutes!",
+  todayNoMenu:"No menu loaded for today yet.",
+  weatherLoading:"Loading weather…",
+  installHint:"Add to home screen for quick access", installBtn:"Install"
 },
 ru: {
   isicActive:"ISIC Активен", tabMenu:"Меню Столовой", tabDiscounts:"Скидки ISIC",
@@ -277,7 +449,17 @@ ru: {
   headingDPMK:"Общественный транспорт (DPMK)", dpmkNote:"Покажите ISIC для льготного студенческого тарифа. Расписания откроются в новой вкладке.",
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
-  linesLabel:"Маршруты:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze"
+  linesLabel:"Маршруты:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
+    headingQuick:"Быстрые ссылки", headingToday:"Сегодня", headingWeather:"Погода Кошице",
+  headingFavs:"Избранное", filterKosice:"Только Кошице", headingSavings:"Экономия за месяц",
+  savingsDesc:"Примерная экономия с ISIC за месяц.",
+  savMeals:"Обеды в месяц", savMealEur:"Дотация за обед (€)", savTransport:"Транспорт (€)",
+  savOther:"Прочее (кино, книги…) €", savTotal:"≈ экономия в месяц:",
+  headingCampus:"Точки кампуса", headingBuses:"Автобусы до кампуса",
+  closeSoon:"Столовая закроется меньше чем через 30 минут!",
+  todayNoMenu:"Меню на сегодня ещё не загружено.",
+  weatherLoading:"Загрузка погоды…",
+  installHint:"Добавить на домашний экран", installBtn:"Установить"
 },
 uk: {
   isicActive:"ISIC Активний", tabMenu:"Меню Їдальні", tabDiscounts:"Знижки ISIC",
@@ -314,7 +496,17 @@ uk: {
   headingDPMK:"Громадський транспорт (DPMK)", dpmkNote:"Покажіть ISIC для пільгового студентського тарифу. Розклади відкриються в новій вкладці.",
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
-  linesLabel:"Маршрути:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze"
+  linesLabel:"Маршрути:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
+    headingQuick:"Швидкі посилання", headingToday:"Сьогодні", headingWeather:"Погода Кошице",
+  headingFavs:"Обране", filterKosice:"Тільки Кошице", headingSavings:"Економія за місяць",
+  savingsDesc:"Орієнтовна економія з ISIC за місяць.",
+  savMeals:"Обіди на місяць", savMealEur:"Дотація за обід (€)", savTransport:"Транспорт (€)",
+  savOther:"Інше (кіно, книги…) €", savTotal:"≈ економія на місяць:",
+  headingCampus:"Точки кампусу", headingBuses:"Автобуси до кампусу",
+  closeSoon:"Їдальня зачиниться менше ніж за 30 хвилин!",
+  todayNoMenu:"Меню на сьогодні ще не завантажено.",
+  weatherLoading:"Завантаження погоди…",
+  installHint:"Додати на головний екран", installBtn:"Встановити"
 },
 sk: {
   isicActive:"ISIC Aktívny", tabMenu:"Jedálny lístok", tabDiscounts:"Zľavy ISIC",
@@ -351,7 +543,17 @@ sk: {
   headingDPMK:"Mestská doprava (DPMK)", dpmkNote:"Pre študentské zľavy ukážte ISIC. Cestovné poriadky sa otvoria v novej karte.",
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
-  linesLabel:"Linky:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze"
+  linesLabel:"Linky:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
+    headingQuick:"Rýchle odkazy", headingToday:"Dnes", headingWeather:"Počasie Košice",
+  headingFavs:"Obľúbené", filterKosice:"Len Košice", headingSavings:"Úspora za mesiac",
+  savingsDesc:"Orientačná úspora s ISIC za mesiac.",
+  savMeals:"Obedy za mesiac", savMealEur:"Dotácia za obed (€)", savTransport:"Doprava (€)",
+  savOther:"Ostatné (kino, knihy…) €", savTotal:"≈ úspora za mesiac:",
+  headingCampus:"Body kampusu", headingBuses:"Autobusy na kampus",
+  closeSoon:"Jedáleň sa zatvára o menej ako 30 minút!",
+  todayNoMenu:"Menu na dnes ešte nie je načítané.",
+  weatherLoading:"Načítavam počasie…",
+  installHint:"Pridať na plochu pre rýchly prístup", installBtn:"Inštalovať"
 }
 };
 const LOCALE_TAG = { sk:'sk-SK', ru:'ru-RU', uk:'uk-UA', en:'en-GB' };
@@ -384,6 +586,24 @@ const Storage = {
   }
 };
 
+
+/* Theme */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('theme-btn');
+  if (btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+  try { localStorage.setItem('tuke-hub:theme', theme); } catch(e){}
+}
+function initTheme(){
+  let theme = 'dark';
+  try { theme = localStorage.getItem('tuke-hub:theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'); } catch(e){}
+  applyTheme(theme);
+  document.getElementById('theme-btn')?.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
+}
+
 let lang = 'ru';
 function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
 
@@ -409,6 +629,7 @@ async function setLang(newLang, persist){
   applyStaticTranslations();
   renderDaySelector();
   await loadAndRenderMenu();
+  await renderTodayBlock();
   renderCategoryFilter();
   renderDiscounts();
   renderDPMK();
@@ -657,6 +878,8 @@ const CATEGORY_I18N_KEY = { all:'catAll', food:'catFood', tech:'catTech', transp
 
 let activeCategory = 'all';
 let favorites = [];
+let kosiceOnly = false;
+
 let map = null, mapReady = false;
 
 function renderCategoryFilter(){
@@ -678,13 +901,40 @@ function matchesQuery(spot, q){
   return spot.name.toLowerCase().includes(q) || addr.includes(q);
 }
 
+function isKosiceSpot(s){
+  if (s.city && /ko[sš]ice/i.test(s.city)) return true;
+  if (s.addr && /ko[sš]ice/i.test(s.addr)) return true;
+  const lat = Number(s.lat), lng = Number(s.lng);
+  if (!isNaN(lat) && !isNaN(lng)) return lat > 48.65 && lat < 48.80 && lng > 21.15 && lng < 21.40;
+  return false;
+}
 function getFilteredSpots(){
   const q = document.getElementById('discount-search').value.trim();
   return DISCOUNT_SPOTS
     .filter(s => activeCategory === 'all' || s.cat === activeCategory)
+    .filter(s => !kosiceOnly || isKosiceSpot(s))
     .filter(s => matchesQuery(s, q))
     .sort((a,b) => (favorites.includes(b.id)?1:0) - (favorites.includes(a.id)?1:0));
 }
+function renderFavorites(){
+  const sec = document.getElementById('fav-section');
+  const list = document.getElementById('fav-list');
+  if (!sec || !list) return;
+  const favs = DISCOUNT_SPOTS.filter(s => favorites.includes(s.id));
+  if (!favs.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = favs.map(spot => {
+    const addr = spot.addr || t('multipleBranches');
+    return `<div class="discount-card"><div style="min-width:0"><strong>${escapeHtml(spot.name)}</strong>
+      <span class="discount-tag">${escapeHtml(spot.phrase)}</span>
+      <p class="muted" style="margin:.25rem 0 0">📍 ${escapeHtml(addr)}</p></div>
+      <button class="fav-btn active" data-fav-id="${spot.id}">★</button></div>`;
+  }).join('');
+  list.querySelectorAll('[data-fav-id]').forEach(btn => {
+    btn.onclick = () => toggleFavorite(btn.dataset.favId);
+  });
+}
+
 
 function navLinks(lat, lng){
   return `
@@ -734,6 +984,7 @@ function renderDiscounts(){
   listEl.querySelectorAll('[data-fav-id]').forEach(btn => {
     btn.onclick = () => toggleFavorite(btn.dataset.favId);
   });
+  renderFavorites();
 }
 
 async function toggleFavorite(id){
@@ -816,29 +1067,221 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
   btn.addEventListener('click', () => setLang(btn.dataset.lang, true));
 });
 
+
+/* ===== Quick links / Campus / Buses ===== */
+const QUICK_LINKS = [
+  { icon:'🎓', key:'MAIS', url:'https://mais.tuke.sk/' },
+  { icon:'📚', key:'Moodle', url:'https://moodle.tuke.sk/' },
+  { icon:'✉️', key:'Webmail', url:'https://outlook.office.com/' },
+  { icon:'📖', key:'Knižnica', url:'https://www.lib.tuke.sk/' },
+  { icon:'🍲', key:'Jedáleň', url:'https://jedalen.tuke.sk/' },
+  { icon:'🗺️', key:'Kampus', url:'https://www.google.com/maps/search/?api=1&query=Technická+univerzita+Košice' }
+];
+const CAMPUS_POINTS = [
+  { name:'Jedáleň Němcovej', addr:'B. Němcovej 1', lat:48.7305, lng:21.2458 },
+  { name:'Univerzitná knižnica', addr:'B. Němcovej 7', lat:48.7300, lng:21.2455 },
+  { name:'Hlavná budova TUKE', addr:'Letná 9', lat:48.7312, lng:21.2450 },
+  { name:'PK – Potiská', addr:'Němcovej', lat:48.7295, lng:21.2470 },
+  { name:'Zastávka Botanická', addr:'DPMK', lat:48.7330, lng:21.2430 },
+  { name:'Zastávka Technická univerzita', addr:'DPMK', lat:48.7308, lng:21.2485 }
+];
+const BUS_LINKS = [
+  { name:'19 → TUKE', url:'https://imhd.sk/ke/cestovny-poriadok/19' },
+  { name:'12 → centrum', url:'https://imhd.sk/ke/cestovny-poriadok/12' },
+  { name:'25', url:'https://imhd.sk/ke/cestovny-poriadok/25' },
+  { name:'imhd.sk Košice', url:'https://imhd.sk/ke/' }
+];
+
+function renderQuickLinks(){
+  const el = document.getElementById('quick-links');
+  if (!el) return;
+  el.innerHTML = QUICK_LINKS.map(l =>
+    `<a class="quick-link" href="${l.url}" target="_blank" rel="noopener"><span class="qi">${l.icon}</span>${escapeHtml(l.key)}</a>`
+  ).join('');
+}
+function renderCampus(){
+  const el = document.getElementById('campus-list');
+  if (!el) return;
+  el.innerHTML = CAMPUS_POINTS.map(p => `
+    <div class="campus-item">
+      <div><strong>${escapeHtml(p.name)}</strong><div class="muted" style="font-size:.75rem">📍 ${escapeHtml(p.addr)}</div></div>
+      <div class="nav-btns">${navLinks(p.lat, p.lng)}</div>
+    </div>`).join('');
+}
+function renderBuses(){
+  const el = document.getElementById('bus-list');
+  if (!el) return;
+  el.innerHTML = BUS_LINKS.map(b =>
+    `<a class="campus-item" href="${b.url}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+      <strong>🚌 ${escapeHtml(b.name)}</strong><span class="link">imhd ↗</span></a>`
+  ).join('');
+}
+
+/* Weather Open-Meteo */
+const WMO = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',80:'🌦',95:'⛈'};
+async function loadWeather(){
+  const tempEl = document.getElementById('weather-temp');
+  const descEl = document.getElementById('weather-desc');
+  const dailyEl = document.getElementById('weather-daily');
+  if (!tempEl) return;
+  descEl.textContent = t('weatherLoading');
+  try {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=48.7164&longitude=21.2611&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava&forecast_days=3';
+    const res = await fetch(url);
+    const data = await res.json();
+    const cur = data.current;
+    const icon = WMO[cur.weather_code] || '🌡';
+    tempEl.textContent = `${icon} ${Math.round(cur.temperature_2m)}°C`;
+    descEl.textContent = 'Košice';
+    const d = data.daily;
+    let htmlW = '';
+    for (let i = 0; i < Math.min(3, d.time.length); i++) {
+      const day = new Date(d.time[i] + 'T12:00:00');
+      const label = i === 0 ? (lang==='sk'?'Dnes':lang==='ru'?'Сегодня':lang==='uk'?'Сьогодні':'Today')
+        : new Intl.DateTimeFormat(LOCALE_TAG[lang]||'en-GB',{weekday:'short'}).format(day);
+      const ic = WMO[d.weather_code[i]] || '';
+      htmlW += `<div>${label}: ${ic} ${Math.round(d.temperature_2m_min[i])}°…${Math.round(d.temperature_2m_max[i])}°</div>`;
+    }
+    dailyEl.innerHTML = htmlW;
+  } catch (e) {
+    tempEl.textContent = '—';
+    descEl.textContent = 'Open-Meteo offline';
+  }
+}
+
+/* Today dishes + close warning */
+async function renderTodayBlock(){
+  const list = document.getElementById('today-dishes');
+  const empty = document.getElementById('today-empty');
+  if (!list) return;
+  const todayKey = fmtKey(new Date());
+  let items = null;
+  try {
+    const saved = await Storage.get(`menu:${todayKey}`);
+    if (saved && saved.items && saved.items.length) items = saved.items;
+  } catch(e){}
+  if (!items) {
+    try {
+      const res = await fetch('data/menu.json', { cache:'no-store' });
+      const data = await res.json();
+      if (data.date === todayKey && data.items && data.items.length) items = data.items;
+    } catch(e){}
+  }
+  if (!items || !items.length) {
+    list.innerHTML = '';
+    if (empty) { empty.style.display='block'; empty.textContent = t('todayNoMenu'); }
+    return;
+  }
+  if (empty) empty.style.display='none';
+  list.innerHTML = items.slice(0,3).map(it =>
+    `<li><span>${escapeHtml(it.name)}</span><strong class="price" style="font-size:.9rem">${it.price != null ? it.price.toFixed(2)+' €' : ''}</strong></li>`
+  ).join('');
+}
+
+function updateCloseWarning(){
+  const el = document.getElementById('close-warn');
+  if (!el) return;
+  const { weekday, hour, minute } = getBratislavaParts();
+  const isWeekday = CANTEEN_OPEN_WEEKDAYS.includes(weekday);
+  const minutesNow = hour * 60 + minute;
+  const closeM = CANTEEN_CLOSE_HOUR * 60;
+  const openM = CANTEEN_OPEN_HOUR * 60;
+  const isOpen = isWeekday && minutesNow >= openM && minutesNow < closeM;
+  if (isOpen && (closeM - minutesNow) <= 30) {
+    el.textContent = t('closeSoon');
+    el.classList.add('show');
+  } else el.classList.remove('show');
+}
+
+function renderSavings(){
+  const meals = Number(document.getElementById('sav-meals')?.value) || 0;
+  const per = Number(document.getElementById('sav-meal-eur')?.value) || 0;
+  const tr = Number(document.getElementById('sav-transport')?.value) || 0;
+  const oth = Number(document.getElementById('sav-other')?.value) || 0;
+  const total = meals * per + tr + oth;
+  const el = document.getElementById('sav-total');
+  if (el) el.textContent = total.toFixed(0) + ' €';
+}
+
+
 async function init(){
+  initTheme();
   let stored = null;
   try { stored = await Storage.get('lang'); } catch (e) {}
   lang = stored || detectLang();
   applyStaticTranslations();
 
+  renderQuickLinks();
+  renderCampus();
+  renderBuses();
   renderDaySelector();
   await loadAndRenderMenu();
+  await renderTodayBlock();
   await loadDiscountsFromRepo();
+  try { favorites = (await Storage.get('discount-favorites')) || []; } catch (e) { favorites = []; }
+  try { kosiceOnly = !!(await Storage.get('kosice-only')); } catch(e){}
+  const kbtn = document.getElementById('kosice-only-btn');
+  if (kbtn) {
+    kbtn.classList.toggle('active', kosiceOnly);
+    kbtn.onclick = async () => {
+      kosiceOnly = !kosiceOnly;
+      kbtn.classList.toggle('active', kosiceOnly);
+      await Storage.set('kosice-only', kosiceOnly);
+      renderDiscounts();
+    };
+  }
   renderCategoryFilter();
   renderDiscounts();
   renderSubsidyCalc();
   renderDPMK();
-
-  try { favorites = (await Storage.get('discount-favorites')) || []; } catch (e) { favorites = []; }
+  renderSavings();
+  ['sav-meals','sav-meal-eur','sav-transport','sav-other'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', renderSavings);
+  });
 
   updateClockAndStatus();
-  setInterval(updateClockAndStatus, 30000);
+  updateCloseWarning();
+  setInterval(() => { updateClockAndStatus(); updateCloseWarning(); }, 30000);
+  loadWeather();
 
   setTimeout(initMap, 50);
 }
 
 init();
+</script>
+
+<div class="install-banner" id="install-banner">
+  <p><strong>TUKE Hub</strong><br><span data-i18n="installHint">Добавить на домашний экран</span></p>
+  <div style="display:flex;gap:.4rem">
+    <button class="btn btn-ghost" id="install-dismiss" type="button">✕</button>
+    <button class="btn btn-primary" id="install-btn" type="button" data-i18n="installBtn">Установить</button>
+  </div>
+</div>
+<script>
+/* PWA install + service worker */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+let deferredPrompt = null;
+const banner = document.getElementById('install-banner');
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('tuke-hub:hide-install')) banner.classList.add('show');
+});
+document.getElementById('install-btn')?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  banner.classList.remove('show');
+});
+document.getElementById('install-dismiss')?.addEventListener('click', () => {
+  localStorage.setItem('tuke-hub:hide-install', '1');
+  banner.classList.remove('show');
+});
 </script>
 </body>
 </html>
