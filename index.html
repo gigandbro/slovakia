@@ -257,7 +257,8 @@
     margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);
     font-size:.8rem;color:var(--slate-400);letter-spacing:.02em;
   }
-  .credit-line strong{color:var(--blue-400);font-weight:600}
+  .credit-line strong,.credit-line a{color:var(--blue-400);font-weight:600}
+  .credit-line a:hover{text-decoration:underline}
   .credit-heart{color:#f472b6}
 
 
@@ -274,6 +275,14 @@
   .collapse-btn:active{background:var(--slate-700)}
   .section-body.is-collapsed{display:none}
   .share-btn{min-height:36px;padding:.35rem .65rem;font-size:.7rem}
+
+
+  .nearby-box{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:.85rem;
+    padding:.85rem;margin-bottom:1rem;animation:fadeUp .4s ease both;
+  }
+  .nearby-box h3{margin:0 0 .5rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .nearby-dist{font-size:.7rem;color:var(--emerald-400);font-weight:600;white-space:nowrap}
 
   /* Mobile polish */
   @media (max-width: 480px) {
@@ -447,6 +456,15 @@
     </div>
     <div id="category-filter" class="chip-row" style="margin-bottom:.75rem"></div>
 
+    <div class="nearby-box" id="nearby-box">
+      <div class="row-between" style="margin-bottom:.35rem">
+        <h3 data-i18n="headingNearby" style="margin:0">Nearby</h3>
+        <button type="button" class="btn btn-primary" id="nearby-btn" data-i18n="nearbyBtn" style="min-height:40px;font-size:.75rem">📍 Find nearby</button>
+      </div>
+      <p class="muted" id="nearby-status" style="margin:0 0 .5rem;font-size:.75rem" data-i18n="nearbyHint"></p>
+      <div id="nearby-list"></div>
+    </div>
+
     <div class="fav-section" id="fav-section" style="display:none">
       <h2 data-i18n="headingFavs" style="margin-bottom:.4rem"></h2>
       <div id="fav-list"></div>
@@ -513,7 +531,7 @@
       </div>
     </div>
     <p class="support-note" data-i18n="deviceSupport"></p>
-    <p class="credit-line">made by <strong>gig</strong> via <span class="credit-heart">❤</span></p>
+    <p class="credit-line">made by <a href="https://github.com/gigandbro" target="_blank" rel="noopener" style="color:var(--blue-400);font-weight:600;text-decoration:none">gig</a> via <span class="credit-heart">❤</span></p>
   </footer>
 
 </main>
@@ -558,6 +576,9 @@ en: {
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Lines:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Quick links", headingToday:"Today", headingWeather:"Weather Košice",
+    headingNearby:"Near you", nearbyBtn:"📍 Find 3 nearby", nearbyHint:"Uses your GPS — allow location when asked.",
+  nearbyLoading:"Locating…", nearbyDenied:"Location unavailable — allow GPS in browser settings.",
+  nearbyNone:"No discounts with coordinates nearby.", nearbyKm:"km", nearbyM:"m",
   headingFavs:"My favorites", filterKosice:"Košice only", headingSavings:"Monthly savings",
   savingsDesc:"Rough estimate of what you can save with ISIC per month.",
   savMeals:"Canteen visits / month", savMealEur:"Subsidy per meal (€)", savTransport:"Transport save (€)",
@@ -621,6 +642,9 @@ ru: {
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Маршруты:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Быстрые ссылки", headingToday:"Сегодня", headingWeather:"Погода Кошице",
+    headingNearby:"Рядом с тобой", nearbyBtn:"📍 3 ближайшие", nearbyHint:"Нужен GPS — разреши геолокацию в браузере.",
+  nearbyLoading:"Определяем место…", nearbyDenied:"Геолокация недоступна — разреши GPS в настройках.",
+  nearbyNone:"Нет скидок с координатами рядом.", nearbyKm:"км", nearbyM:"м",
   headingFavs:"Избранное", filterKosice:"Только Кошице", headingSavings:"Экономия за месяц",
   savingsDesc:"Примерная экономия с ISIC за месяц.",
   savMeals:"Обеды в месяц", savMealEur:"Дотация за обед (€)", savTransport:"Транспорт (€)",
@@ -684,6 +708,9 @@ uk: {
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Маршрути:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Швидкі посилання", headingToday:"Сьогодні", headingWeather:"Погода Кошице",
+    headingNearby:"Поруч із тобою", nearbyBtn:"📍 3 найближчі", nearbyHint:"Потрібен GPS — дозволь геолокацію в браузері.",
+  nearbyLoading:"Визначаємо місце…", nearbyDenied:"Геолокація недоступна — дозволь GPS у налаштуваннях.",
+  nearbyNone:"Немає знижок з координатами поруч.", nearbyKm:"км", nearbyM:"м",
   headingFavs:"Обране", filterKosice:"Тільки Кошице", headingSavings:"Економія за місяць",
   savingsDesc:"Орієнтовна економія з ISIC за місяць.",
   savMeals:"Обіди на місяць", savMealEur:"Дотація за обід (€)", savTransport:"Транспорт (€)",
@@ -747,6 +774,9 @@ sk: {
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Linky:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Rýchle odkazy", headingToday:"Dnes", headingWeather:"Počasie Košice",
+    headingNearby:"V tvojej blízkosti", nearbyBtn:"📍 3 najbližšie", nearbyHint:"Použije GPS — povoľ polohu v prehliadači.",
+  nearbyLoading:"Zisťujem polohu…", nearbyDenied:"Poloha nedostupná — povoľ GPS v nastaveniach.",
+  nearbyNone:"Žiadne zľavy so súradnicami v okolí.", nearbyKm:"km", nearbyM:"m",
   headingFavs:"Obľúbené", filterKosice:"Len Košice", headingSavings:"Úspora za mesiac",
   savingsDesc:"Orientačná úspora s ISIC za mesiac.",
   savMeals:"Obedy za mesiac", savMealEur:"Dotácia za obed (€)", savTransport:"Doprava (€)",
@@ -1118,6 +1148,84 @@ function matchesQuery(spot, q){
   const addr = (spot.addr || '').toLowerCase();
   return spot.name.toLowerCase().includes(q) || addr.includes(q);
 }
+
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function formatDistance(km) {
+  if (km < 1) return Math.round(km * 1000) + ' ' + t('nearbyM');
+  return km.toFixed(1) + ' ' + t('nearbyKm');
+}
+function renderNearbyList(userLat, userLng) {
+  const list = document.getElementById('nearby-list');
+  const status = document.getElementById('nearby-status');
+  if (!list) return;
+  const ranked = DISCOUNT_SPOTS
+    .filter(s => s.lat != null && s.lng != null && !isNaN(Number(s.lat)) && !isNaN(Number(s.lng)))
+    .map(s => ({ ...s, _km: haversineKm(userLat, userLng, Number(s.lat), Number(s.lng)) }))
+    .sort((a, b) => a._km - b._km)
+    .slice(0, 3);
+  if (!ranked.length) {
+    list.innerHTML = '';
+    if (status) status.textContent = t('nearbyNone');
+    return;
+  }
+  if (status) status.textContent = '';
+  list.innerHTML = ranked.map((spot, i) => {
+    const addr = spot.addr || t('multipleBranches');
+    const ph = typeof spot.phrase === 'string' && !String(spot.phrase).startsWith('discount') && !String(spot.phrase).startsWith('subsidy')
+      ? spot.phrase : t(spot.phrase);
+    return `<div class="discount-card" style="animation-delay:${i*0.05}s">
+      <div style="min-width:0">
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <strong>${i+1}. ${escapeHtml(spot.name)}</strong>
+          <span class="nearby-dist">${formatDistance(spot._km)}</span>
+        </div>
+        <span class="discount-tag">${escapeHtml(ph || '')}</span>
+        <p class="muted" style="margin:.25rem 0 0">📍 ${escapeHtml(addr)}</p>
+        <div class="nav-btns">${navLinks(spot.lat, spot.lng)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  // also center map on user if available
+  if (map && mapReady) {
+    try {
+      map.setView([userLat, userLng], 14);
+      if (window._userMarker) map.removeLayer(window._userMarker);
+      window._userMarker = L.circleMarker([userLat, userLng], {
+        radius: 10, color: '#2563eb', fillColor: '#60a5fa', fillOpacity: 0.85, weight: 3
+      }).addTo(map).bindPopup(t('youAreHere') || 'You');
+    } catch(e){}
+  }
+}
+function findNearbyDiscounts() {
+  const status = document.getElementById('nearby-status');
+  const btn = document.getElementById('nearby-btn');
+  if (!navigator.geolocation) {
+    if (status) status.textContent = t('nearbyDenied');
+    return;
+  }
+  if (btn) btn.disabled = true;
+  if (status) status.textContent = t('nearbyLoading');
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      renderNearbyList(pos.coords.latitude, pos.coords.longitude);
+      if (btn) btn.disabled = false;
+    },
+    () => {
+      if (status) status.textContent = t('nearbyDenied');
+      if (btn) btn.disabled = false;
+    },
+    { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+  );
+}
+
 
 function isKosiceSpot(s){
   if (s.city && /ko[sš]ice/i.test(s.city)) return true;
@@ -1686,6 +1794,7 @@ async function init(){
       renderDiscounts();
     };
   }
+  document.getElementById('nearby-btn')?.addEventListener('click', findNearbyDiscounts);
   renderCategoryFilter();
   renderDiscounts();
   renderSubsidyCalc();
