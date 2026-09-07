@@ -12,12 +12,14 @@
 <meta name="apple-mobile-web-app-title" content="TUKE Hub">
 <meta name="application-name" content="TUKE Hub">
 <meta name="format-detection" content="telephone=no">
+<meta name="telegram:channel" content="">
 <title>TUKE Student Hub</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-192.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   *,*::before,*::after{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -284,6 +286,35 @@
   .nearby-box h3{margin:0 0 .5rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
   .nearby-dist{font-size:.7rem;color:var(--emerald-400);font-weight:600;white-space:nowrap}
 
+
+  /* Telegram / in-app browser */
+  html.tg-viewport body{
+    padding-top: max(env(safe-area-inset-top), var(--tg-content-safe-top, 0px));
+    padding-bottom: max(env(safe-area-inset-bottom), var(--tg-content-safe-bottom, 0px));
+    min-height: var(--tg-viewport-stable-height, 100dvh);
+  }
+  html.tg-viewport header{
+    padding-top: max(env(safe-area-inset-top), var(--tg-content-safe-top, 0px));
+  }
+  html.tg-viewport main{
+    padding-bottom: max(2.5rem, calc(1.5rem + var(--tg-content-safe-bottom, 0px)));
+  }
+  /* iOS Safari / Telegram: prevent rubber-band issues on sticky */
+  html.ios-webview body{position:relative}
+  html.ios-webview .chip-row,
+  html.ios-webview #map{
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  /* Larger touch targets in narrow Telegram webview */
+  @media (max-width: 480px) {
+    .btn, .toggle-chip, .chip, .lang-btn, .theme-btn, .collapse-btn, .fav-btn, .share-btn {
+      min-height: 44px;
+    }
+    .quick-link{min-height:64px}
+    input[type=text], input[type=number]{font-size:16px !important}
+  }
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -538,6 +569,61 @@
 
 
 <script>
+
+/* Telegram WebApp + iOS/Android in-app browser adaptation */
+(function initTelegramEnv(){
+  const ua = navigator.userAgent || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isAndroid = /Android/i.test(ua);
+  const isTg = !!(window.Telegram && Telegram.WebApp) || /Telegram/i.test(ua);
+  if (isIOS) document.documentElement.classList.add('ios-webview');
+  if (isAndroid) document.documentElement.classList.add('android-webview');
+  if (!window.Telegram || !Telegram.WebApp) return;
+  const tg = Telegram.WebApp;
+  try {
+    tg.ready();
+    tg.expand();
+    if (typeof tg.disableVerticalSwipes === 'function') {
+      try { tg.disableVerticalSwipes(); } catch(e){}
+    }
+    document.documentElement.classList.add('tg-viewport');
+    const applyTgCss = () => {
+      const root = document.documentElement;
+      const h = tg.viewportStableHeight || tg.viewportHeight || window.innerHeight;
+      root.style.setProperty('--tg-viewport-stable-height', h + 'px');
+      const cs = tg.contentSafeAreaInset || {};
+      const sa = tg.safeAreaInset || {};
+      root.style.setProperty('--tg-content-safe-top', ((cs.top || 0) + (sa.top || 0)) + 'px');
+      root.style.setProperty('--tg-content-safe-bottom', ((cs.bottom || 0) + (sa.bottom || 0)) + 'px');
+      if (tg.colorScheme === 'light') {
+        // don't force theme — user may have chosen dark in app
+      }
+      try {
+        tg.setHeaderColor('#0f172a');
+        tg.setBackgroundColor('#0f172a');
+      } catch(e){}
+    };
+    applyTgCss();
+    tg.onEvent && tg.onEvent('viewportChanged', applyTgCss);
+    tg.onEvent && tg.onEvent('themeChanged', applyTgCss);
+    // open external links outside Telegram when possible
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+      if (a.target === '_blank' || /^https?:/i.test(href)) {
+        if (tg.openLink) {
+          e.preventDefault();
+          tg.openLink(href, { try_instant_view: false });
+        }
+      }
+    }, true);
+  } catch (e) {
+    console.warn('Telegram WebApp init', e);
+  }
+})();
+
 const I18N = {
 en: {
   isicActive:"ISIC Active", tabMenu:"Canteen Menu", tabDiscounts:"ISIC Discounts",
