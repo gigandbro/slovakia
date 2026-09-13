@@ -1929,7 +1929,7 @@ async function loadNews() {
 
 
 /* ===== Schedule (ICS from MAIS) ===== */
-const SCHED_KEY = 'tuke-hub:schedule-v1';
+const SCHED_KEY = 'tuke-hub:schedule-v2';
 let scheduleData = []; // [{day, weekday, events:[]}]
 
 function unfoldICS(content) {
@@ -1960,7 +1960,14 @@ function formatDateFull(date) {
 }
 function cleanLocation(loc) {
   if (!loc) return '—';
-  return loc.replace(/\\,/g, ',').replace(/^\.\s*\.\\?\s*,?\s*/i, '').replace(/\s+/g, ' ').trim() || '—';
+  let s = loc.replace(/\\,/g, ',').replace(/\\;/g, ';');
+  s = s.replace(/^\.\s*\.?\s*,?\s*/i, '').replace(/\s+/g, ' ').trim();
+  // MAIS online noise: ". ., online_UPS (online_UPS)"
+  if (/online/i.test(s)) {
+    const m = s.match(/online[_\w]*/i);
+    return m ? ('Online · ' + m[0]) : 'Online';
+  }
+  return s || '—';
 }
 function cleanTitle(summary) {
   if (!summary) return '—';
@@ -1973,7 +1980,7 @@ function detectTypeAndOnline(summary, location) {
   if (/prednášk|prednask|лекция|lecture/i.test(text)) { type = 'lecture'; badge = 'prednaska'; }
   else if (/cvičen|cviceni|практик|seminar|numerické/i.test(text)) { type = 'practice'; badge = 'cvicenie'; }
   else if (/projekt|project|práca|praca/i.test(text)) { type = 'project'; badge = 'project'; }
-  if (isOnline) badge = 'online';
+  // keep type badge; online is separate flag (shown as second badge)
   return { type, isOnline, badge };
 }
 function parseRRuleUntil(rrule) {
@@ -2037,16 +2044,25 @@ function buildScheduleFromEvents(rawEvents) {
       const k = d.toDateString();
       if (!seen.has(k)) { seen.add(k); uniqueDates.push(d); }
     }
+    const toKey = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     const eventObj = {
       time: g.time, startMin: g.startMin, title: g.title, type: g.type,
-      location: g.location, isOnline: g.isOnline, badge: g.badge, period: null, blockDates: null
+      location: g.location, isOnline: g.isOnline, badge: g.badge,
+      period: null, blockDates: null, dateKeys: [], rangeStart: null, rangeEnd: null, hasRRule: !!g.hasRRule
     };
+    eventObj.dateKeys = uniqueDates.map(toKey);
+    if (uniqueDates[0]) eventObj.rangeStart = toKey(uniqueDates[0]);
     if (g.hasRRule && g.until) {
+      eventObj.rangeEnd = toKey(g.until);
       eventObj.period = formatDateShort(uniqueDates[0]) + ' – ' + formatDateShort(g.until);
     } else if (uniqueDates.length >= 2) {
       eventObj.blockDates = uniqueDates.map(formatDateFull);
+      eventObj.rangeEnd = toKey(uniqueDates[uniqueDates.length - 1]);
     } else if (uniqueDates.length === 1 && !g.hasRRule) {
       eventObj.period = formatDateFull(uniqueDates[0]);
+      eventObj.rangeEnd = eventObj.rangeStart;
+    } else if (g.hasRRule) {
+      eventObj.period = 'RRULE';
     }
     byDay[g.weekday].push(eventObj);
   }
@@ -2073,15 +2089,33 @@ function badgeLabel(badge) {
   if (badge === 'project') return t('badgeProject');
   return t('badgeOther');
 }
+function eventOccursOn(ev, date) {
+  const key = date.getFullYear() + '-' + String(date.getMonth()+1).padStart(2,'0') + '-' + String(date.getDate()).padStart(2,'0');
+  if (ev.dateKeys && ev.dateKeys.length && !ev.hasRRule) {
+    return ev.dateKeys.indexOf(key) !== -1;
+  }
+  if (ev.hasRRule) {
+    if (ev.rangeStart && key < ev.rangeStart) return false;
+    if (ev.rangeEnd && key > ev.rangeEnd) return false;
+    return true; // same weekday already filtered by day bucket
+  }
+  if (ev.dateKeys && ev.dateKeys.length) return ev.dateKeys.indexOf(key) !== -1;
+  return true;
+}
+function eventBadgesHtml(ev) {
+  let h = `<span class="sched-badge ${ev.badge}">${escapeHtml(badgeLabel(ev.badge))}</span>`;
+  if (ev.isOnline && ev.badge !== 'online') h += ` <span class="sched-badge online">${escapeHtml(t('badgeOnline'))}</span>`;
+  return h;
+}
 function eventHtml(ev) {
-  const border = ev.badge === 'online' ? 'online' : (ev.badge === 'cvicenie' ? 'cvicenie' : (ev.badge === 'project' ? 'project' : ''));
+  const border = ev.isOnline ? 'online' : (ev.badge === 'cvicenie' ? 'cvicenie' : (ev.badge === 'project' ? 'project' : ''));
   const block = ev.blockDates ? `<div class="muted" style="font-size:.7rem;margin-top:.25rem">⚠️ ${ev.blockDates.join(', ')}</div>` : '';
-  const period = ev.period ? `<div class="muted" style="font-size:.7rem;margin-top:.2rem">📅 ${escapeHtml(ev.period)}</div>` : '';
+  const period = ev.period && ev.period !== 'RRULE' ? `<div class="muted" style="font-size:.7rem;margin-top:.2rem">📅 ${escapeHtml(ev.period)}</div>` : '';
   return `<div class="sched-event ${border}">
     <div class="sched-time">⏰ ${escapeHtml(ev.time)}</div>
     <div class="sched-title">${escapeHtml(ev.title)}</div>
     <div class="sched-meta">
-      <span class="sched-badge ${ev.badge}">${escapeHtml(badgeLabel(ev.badge))}</span>
+      ${eventBadgesHtml(ev)}
       <span>📍 ${escapeHtml(ev.location)}</span>
     </div>${period}${block}
   </div>`;
@@ -2105,21 +2139,24 @@ function renderTodayClasses() {
   if (!wrap || !list) return;
   if (!scheduleData.length) { wrap.style.display = 'none'; return; }
   wrap.style.display = 'block';
-  const wd = new Date().getDay();
+  const now = new Date();
+  const wd = now.getDay();
   const day = scheduleData.find(d => d.weekday === wd);
-  if (!day || !day.events.length) {
+  const events = (day && day.events) ? day.events.filter(ev => eventOccursOn(ev, now)) : [];
+  if (!events.length) {
     list.innerHTML = '';
     if (empty) { empty.style.display = 'block'; empty.textContent = t('schedNoClasses'); }
     return;
   }
   if (empty) empty.style.display = 'none';
-  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
-  list.innerHTML = day.events.map(ev => {
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  list.innerHTML = events.map(ev => {
     const upcoming = ev.startMin >= nowMin;
-    return `<div class="sched-event ${ev.badge === 'online' ? 'online' : ''}" style="${upcoming ? '' : 'opacity:.55'}">
-      <div class="sched-time">${escapeHtml(ev.time)}${upcoming && ev.startMin - nowMin <= 90 ? ' · ' + t('schedNext') : ''}</div>
+    const border = ev.isOnline ? 'online' : (ev.badge === 'cvicenie' ? 'cvicenie' : (ev.badge === 'project' ? 'project' : ''));
+    return `<div class="sched-event ${border}" style="${upcoming ? '' : 'opacity:.55'}">
+      <div class="sched-time">${escapeHtml(ev.time)}${upcoming && ev.startMin - nowMin <= 90 && ev.startMin >= nowMin ? ' · ' + t('schedNext') : ''}</div>
       <div class="sched-title">${escapeHtml(ev.title)}</div>
-      <div class="sched-meta"><span class="sched-badge ${ev.badge}">${escapeHtml(badgeLabel(ev.badge))}</span>
+      <div class="sched-meta">${eventBadgesHtml(ev)}
       <span>📍 ${escapeHtml(ev.location)}</span></div>
     </div>`;
   }).join('');
