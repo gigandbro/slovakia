@@ -315,6 +315,27 @@
     input[type=text], input[type=number]{font-size:16px !important}
   }
 
+
+  .sched-upload{border:1px dashed var(--border);border-radius:.75rem;padding:1rem;text-align:center;margin-bottom:.75rem;background:var(--card-bg)}
+  .sched-upload input[type=file]{display:none}
+  .sched-day{margin-bottom:.75rem}
+  .sched-day h3{margin:0 0 .4rem;font-size:.85rem;color:var(--blue-400)}
+  .sched-event{background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--blue-500);border-radius:.5rem;padding:.65rem .75rem;margin-bottom:.45rem}
+  .sched-event.online{border-left-color:var(--emerald-500)}
+  .sched-event.cvicenie{border-left-color:var(--amber-400)}
+  .sched-event.project{border-left-color:var(--purple-400)}
+  .sched-time{font-weight:700;font-size:.9rem}
+  .sched-title{font-weight:600;margin:.15rem 0}
+  .sched-meta{font-size:.75rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+  .sched-badge{font-size:.65rem;font-weight:700;padding:.1rem .45rem;border-radius:.3rem;text-transform:uppercase}
+  .sched-badge.online{background:rgba(16,185,129,.2);color:var(--emerald-400)}
+  .sched-badge.prednaska{background:rgba(59,130,246,.2);color:var(--blue-300)}
+  .sched-badge.cvicenie{background:rgba(251,191,36,.2);color:var(--amber-400)}
+  .sched-badge.project{background:rgba(192,132,252,.2);color:var(--purple-400)}
+  .sched-badge.other{background:var(--slate-700);color:var(--slate-300)}
+  .today-classes{margin-top:.75rem;padding-top:.65rem;border-top:1px solid var(--border)}
+  .today-classes h4{margin:0 0 .4rem;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -391,6 +412,11 @@
       <div class="close-warn" id="close-warn"></div>
       <ul class="today-dishes" id="today-dishes"></ul>
       <p class="muted" id="today-empty" style="display:none;margin:.4rem 0 0;font-size:.8rem"></p>
+      <div class="today-classes" id="today-classes-wrap" style="display:none">
+        <h4 data-i18n="headingClassesToday"></h4>
+        <div id="today-classes"></div>
+        <p class="muted" id="today-classes-empty" style="display:none;font-size:.8rem;margin:.3rem 0 0"></p>
+      </div>
     </div>
     <div class="card today-card">
       <h3 data-i18n="headingWeather"></h3>
@@ -407,6 +433,27 @@
   <p class="status-sub" data-i18n="canteenSub" style="margin:-.5rem 0 1rem"></p>
 
   
+
+  <section id="schedule-section">
+    <div class="row-between">
+      <h2 data-i18n="headingSchedule"></h2>
+      <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap">
+        <a class="link" href="https://mais.tuke.sk/" target="_blank" rel="noopener">MAIS ↗</a>
+        <button type="button" class="btn btn-ghost" id="sched-clear-btn" data-i18n="schedClear" style="min-height:36px;font-size:.7rem">Clear</button>
+        <button type="button" class="collapse-btn" data-collapse="schedule-body">▾</button>
+      </div>
+    </div>
+    <div class="section-body" id="schedule-body">
+      <div class="sched-upload">
+        <label for="ics-file" class="btn btn-primary" style="cursor:pointer" data-i18n="schedUpload">📁 Upload ICS from MAIS</label>
+        <input type="file" id="ics-file" accept=".ics,text/calendar">
+        <p class="muted" style="margin:.5rem 0 0;font-size:.75rem" data-i18n="schedUploadHint"></p>
+        <p class="muted" id="sched-status" style="margin:.35rem 0 0;font-size:.75rem"></p>
+      </div>
+      <div id="schedule-list"></div>
+    </div>
+  </section>
+
   <section id="news-section">
     <div class="row-between">
       <h2 data-i18n="headingNews"></h2>
@@ -661,7 +708,13 @@ en: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Lines:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Quick links", headingToday:"Today", headingWeather:"Weather Košice",
+    headingQuick:"Quick links",   headingSchedule:"My schedule", headingClassesToday:"Classes today",
+  schedUpload:"📁 Upload ICS from MAIS", schedUploadHint:"MAIS → calendar export → .ics file. Saved on this device.",
+  schedClear:"Clear", schedLoaded:"Loaded events", schedEmpty:"No schedule yet — upload an ICS file from MAIS.",
+  schedError:"Could not read ICS file", schedCleared:"Schedule cleared",
+  schedNoClasses:"No classes today", schedNext:"Next class",
+  badgeLecture:"Lecture", badgePractice:"Practice", badgeProject:"Project", badgeOnline:"Online", badgeOther:"Other",
+  headingToday:"Today", headingWeather:"Weather Košice",
     headingNearby:"Near you", nearbyBtn:"📍 Find 3 nearby", nearbyHint:"Uses your GPS — allow location when asked.",
   nearbyLoading:"Locating…", nearbyDenied:"Location unavailable — allow GPS in browser settings.",
   nearbyNone:"No discounts with coordinates nearby.", nearbyKm:"km", nearbyM:"m",
@@ -727,7 +780,13 @@ ru: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Маршруты:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Быстрые ссылки", headingToday:"Сегодня", headingWeather:"Погода Кошице",
+    headingQuick:"Быстрые ссылки",   headingSchedule:"Моё расписание", headingClassesToday:"Пары сегодня",
+  schedUpload:"📁 Загрузить ICS из MAIS", schedUploadHint:"MAIS → экспорт календаря → файл .ics. Сохраняется на этом устройстве.",
+  schedClear:"Очистить", schedLoaded:"Загружено событий", schedEmpty:"Расписания пока нет — загрузи ICS из MAIS.",
+  schedError:"Не удалось прочитать ICS", schedCleared:"Расписание очищено",
+  schedNoClasses:"Сегодня пар нет", schedNext:"Следующая пара",
+  badgeLecture:"Лекция", badgePractice:"Практика", badgeProject:"Проект", badgeOnline:"Online", badgeOther:"Другое",
+  headingToday:"Сегодня", headingWeather:"Погода Кошице",
     headingNearby:"Рядом с тобой", nearbyBtn:"📍 3 ближайшие", nearbyHint:"Нужен GPS — разреши геолокацию в браузере.",
   nearbyLoading:"Определяем место…", nearbyDenied:"Геолокация недоступна — разреши GPS в настройках.",
   nearbyNone:"Нет скидок с координатами рядом.", nearbyKm:"км", nearbyM:"м",
@@ -793,7 +852,13 @@ uk: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Маршрути:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Швидкі посилання", headingToday:"Сьогодні", headingWeather:"Погода Кошице",
+    headingQuick:"Швидкі посилання",   headingSchedule:"Мій розклад", headingClassesToday:"Пари сьогодні",
+  schedUpload:"📁 Завантажити ICS з MAIS", schedUploadHint:"MAIS → експорт календаря → файл .ics. Зберігається на цьому пристрої.",
+  schedClear:"Очистити", schedLoaded:"Завантажено подій", schedEmpty:"Розкладу ще немає — завантаж ICS з MAIS.",
+  schedError:"Не вдалося прочитати ICS", schedCleared:"Розклад очищено",
+  schedNoClasses:"Сьогодні пар немає", schedNext:"Наступна пара",
+  badgeLecture:"Лекція", badgePractice:"Практика", badgeProject:"Проєкт", badgeOnline:"Online", badgeOther:"Інше",
+  headingToday:"Сьогодні", headingWeather:"Погода Кошице",
     headingNearby:"Поруч із тобою", nearbyBtn:"📍 3 найближчі", nearbyHint:"Потрібен GPS — дозволь геолокацію в браузері.",
   nearbyLoading:"Визначаємо місце…", nearbyDenied:"Геолокація недоступна — дозволь GPS у налаштуваннях.",
   nearbyNone:"Немає знижок з координатами поруч.", nearbyKm:"км", nearbyM:"м",
@@ -859,7 +924,13 @@ sk: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Linky:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Rýchle odkazy", headingToday:"Dnes", headingWeather:"Počasie Košice",
+    headingQuick:"Rýchle odkazy",   headingSchedule:"Môj rozvrh", headingClassesToday:"Hodiny dnes",
+  schedUpload:"📁 Nahrať ICS z MAIS", schedUploadHint:"MAIS → export kalendára → súbor .ics. Uloží sa v tomto zariadení.",
+  schedClear:"Vymazať", schedLoaded:"Načítané udalosti", schedEmpty:"Zatiaľ žiadny rozvrh — nahraj ICS z MAIS.",
+  schedError:"ICS sa nepodarilo načítať", schedCleared:"Rozvrh vymazaný",
+  schedNoClasses:"Dnes žiadne hodiny", schedNext:"Ďalšia hodina",
+  badgeLecture:"Prednáška", badgePractice:"Cvičenie", badgeProject:"Projekt", badgeOnline:"Online", badgeOther:"Iné",
+  headingToday:"Dnes", headingWeather:"Počasie Košice",
     headingNearby:"V tvojej blízkosti", nearbyBtn:"📍 3 najbližšie", nearbyHint:"Použije GPS — povoľ polohu v prehliadači.",
   nearbyLoading:"Zisťujem polohu…", nearbyDenied:"Poloha nedostupná — povoľ GPS v nastaveniach.",
   nearbyNone:"Žiadne zľavy so súradnicami v okolí.", nearbyKm:"km", nearbyM:"m",
@@ -961,6 +1032,8 @@ function detectLang(){
 async function setLang(newLang, persist){
   lang = newLang;
   applyStaticTranslations();
+  renderScheduleList();
+  renderTodayClasses();
   renderDaySelector();
   await loadAndRenderMenu();
   await renderTodayBlock();
@@ -1854,6 +1927,255 @@ async function loadNews() {
   }
 }
 
+
+/* ===== Schedule (ICS from MAIS) ===== */
+const SCHED_KEY = 'tuke-hub:schedule-v1';
+let scheduleData = []; // [{day, weekday, events:[]}]
+
+function unfoldICS(content) {
+  return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n[ \t]/g, '');
+}
+function parseICSDate(value) {
+  if (!value) return null;
+  const pure = value.includes(':') ? value.split(':').pop() : value;
+  if (/^\d{8}$/.test(pure)) return new Date(+pure.slice(0,4), +pure.slice(4,6)-1, +pure.slice(6,8));
+  const m = pure.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/);
+  if (m) {
+    const [, y, mo, d, h, mi, s] = m.map(Number);
+    return new Date(y, mo - 1, d, h, mi, s);
+  }
+  return null;
+}
+function formatTime(date) {
+  if (!date) return '??:??';
+  return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+function formatDateShort(date) {
+  if (!date) return '';
+  return String(date.getDate()).padStart(2,'0') + '.' + String(date.getMonth()+1).padStart(2,'0');
+}
+function formatDateFull(date) {
+  if (!date) return '';
+  return formatDateShort(date) + '.' + date.getFullYear();
+}
+function cleanLocation(loc) {
+  if (!loc) return '—';
+  return loc.replace(/\\,/g, ',').replace(/^\.\s*\.\\?\s*,?\s*/i, '').replace(/\s+/g, ' ').trim() || '—';
+}
+function cleanTitle(summary) {
+  if (!summary) return '—';
+  return summary.replace(/\s*-\s*(Prednáška|Cvičenie numerické|Cvičenie|Projektová práca|Lecture|Exercise).*$/i, '').trim();
+}
+function detectTypeAndOnline(summary, location) {
+  const text = ((summary || '') + ' ' + (location || '')).toLowerCase();
+  const isOnline = /online|онлайн|teams|zoom|ups|moodle/i.test(text);
+  let type = 'other', badge = 'other';
+  if (/prednášk|prednask|лекция|lecture/i.test(text)) { type = 'lecture'; badge = 'prednaska'; }
+  else if (/cvičen|cviceni|практик|seminar|numerické/i.test(text)) { type = 'practice'; badge = 'cvicenie'; }
+  else if (/projekt|project|práca|praca/i.test(text)) { type = 'project'; badge = 'project'; }
+  if (isOnline) badge = 'online';
+  return { type, isOnline, badge };
+}
+function parseRRuleUntil(rrule) {
+  if (!rrule) return null;
+  const m = rrule.match(/UNTIL=(\d{8}T\d{6}Z?)/i);
+  return m ? parseICSDate(m[1]) : null;
+}
+function parseICS(content) {
+  const lines = unfoldICS(content).split('\n');
+  const events = [];
+  let current = null;
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) continue;
+    if (line === 'BEGIN:VEVENT') { current = {}; continue; }
+    if (line === 'END:VEVENT') {
+      if (current && current.dtstart) events.push(current);
+      current = null; continue;
+    }
+    if (!current) continue;
+    const colonIdx = line.indexOf(':');
+    if (colonIdx === -1) continue;
+    const left = line.slice(0, colonIdx);
+    const value = line.slice(colonIdx + 1);
+    const propName = left.split(';')[0].toUpperCase();
+    if (propName === 'SUMMARY') current.summary = value;
+    else if (propName === 'LOCATION') current.location = value;
+    else if (propName === 'DTSTART') current.dtstart = parseICSDate(value);
+    else if (propName === 'DTEND') current.dtend = parseICSDate(value);
+    else if (propName === 'RRULE') current.rrule = value;
+  }
+  return events;
+}
+function buildScheduleFromEvents(rawEvents) {
+  const DAY_KEYS = ['sun','mon','tue','wed','thu','fri','sat'];
+  const groups = new Map();
+  for (const ev of rawEvents) {
+    if (!ev.dtstart) continue;
+    const weekday = ev.dtstart.getDay();
+    const timeStr = formatTime(ev.dtstart) + ' – ' + formatTime(ev.dtend || ev.dtstart);
+    const title = cleanTitle(ev.summary);
+    const location = cleanLocation(ev.location);
+    const { type, isOnline, badge } = detectTypeAndOnline(ev.summary, ev.location);
+    const until = parseRRuleUntil(ev.rrule);
+    const key = weekday + '|' + timeStr + '|' + title + '|' + location;
+    if (!groups.has(key)) {
+      groups.set(key, { weekday, time: timeStr, startMin: ev.dtstart.getHours()*60+ev.dtstart.getMinutes(),
+        title, type, location, isOnline, badge, dates: [], hasRRule: !!ev.rrule, until });
+    }
+    const g = groups.get(key);
+    g.dates.push(ev.dtstart);
+    if (until && (!g.until || until > g.until)) g.until = until;
+    if (ev.rrule) g.hasRRule = true;
+  }
+  const byDay = Array.from({ length: 7 }, () => []);
+  for (const g of groups.values()) {
+    g.dates.sort((a,b) => a - b);
+    const uniqueDates = [];
+    const seen = new Set();
+    for (const d of g.dates) {
+      const k = d.toDateString();
+      if (!seen.has(k)) { seen.add(k); uniqueDates.push(d); }
+    }
+    const eventObj = {
+      time: g.time, startMin: g.startMin, title: g.title, type: g.type,
+      location: g.location, isOnline: g.isOnline, badge: g.badge, period: null, blockDates: null
+    };
+    if (g.hasRRule && g.until) {
+      eventObj.period = formatDateShort(uniqueDates[0]) + ' – ' + formatDateShort(g.until);
+    } else if (uniqueDates.length >= 2) {
+      eventObj.blockDates = uniqueDates.map(formatDateFull);
+    } else if (uniqueDates.length === 1 && !g.hasRRule) {
+      eventObj.period = formatDateFull(uniqueDates[0]);
+    }
+    byDay[g.weekday].push(eventObj);
+  }
+  byDay.forEach(list => list.sort((a,b) => a.startMin - b.startMin));
+  const schedule = [];
+  const names = {
+    en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+    ru: ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],
+    uk: ['Неділя','Понеділок','Вівторок','Середа','Четвер','Пʼятниця','Субота'],
+    sk: ['Nedeľa','Pondelok','Utorok','Streda','Štvrtok','Piatok','Sobota']
+  };
+  for (const wd of [1,2,3,4,5,6,0]) {
+    if (byDay[wd].length) {
+      schedule.push({ weekday: wd, dayKey: DAY_KEYS[wd], events: byDay[wd],
+        dayNames: { en: names.en[wd], ru: names.ru[wd], uk: names.uk[wd], sk: names.sk[wd] } });
+    }
+  }
+  return schedule;
+}
+function badgeLabel(badge) {
+  if (badge === 'online') return t('badgeOnline');
+  if (badge === 'prednaska') return t('badgeLecture');
+  if (badge === 'cvicenie') return t('badgePractice');
+  if (badge === 'project') return t('badgeProject');
+  return t('badgeOther');
+}
+function eventHtml(ev) {
+  const border = ev.badge === 'online' ? 'online' : (ev.badge === 'cvicenie' ? 'cvicenie' : (ev.badge === 'project' ? 'project' : ''));
+  const block = ev.blockDates ? `<div class="muted" style="font-size:.7rem;margin-top:.25rem">⚠️ ${ev.blockDates.join(', ')}</div>` : '';
+  const period = ev.period ? `<div class="muted" style="font-size:.7rem;margin-top:.2rem">📅 ${escapeHtml(ev.period)}</div>` : '';
+  return `<div class="sched-event ${border}">
+    <div class="sched-time">⏰ ${escapeHtml(ev.time)}</div>
+    <div class="sched-title">${escapeHtml(ev.title)}</div>
+    <div class="sched-meta">
+      <span class="sched-badge ${ev.badge}">${escapeHtml(badgeLabel(ev.badge))}</span>
+      <span>📍 ${escapeHtml(ev.location)}</span>
+    </div>${period}${block}
+  </div>`;
+}
+function renderScheduleList() {
+  const el = document.getElementById('schedule-list');
+  if (!el) return;
+  if (!scheduleData.length) {
+    el.innerHTML = `<div class="empty-box">${escapeHtml(t('schedEmpty'))}</div>`;
+    return;
+  }
+  el.innerHTML = scheduleData.map(day => {
+    const name = (day.dayNames && day.dayNames[lang]) || day.dayNames?.en || '';
+    return `<div class="sched-day"><h3>${escapeHtml(name)}</h3>${day.events.map(eventHtml).join('')}</div>`;
+  }).join('');
+}
+function renderTodayClasses() {
+  const wrap = document.getElementById('today-classes-wrap');
+  const list = document.getElementById('today-classes');
+  const empty = document.getElementById('today-classes-empty');
+  if (!wrap || !list) return;
+  if (!scheduleData.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  const wd = new Date().getDay();
+  const day = scheduleData.find(d => d.weekday === wd);
+  if (!day || !day.events.length) {
+    list.innerHTML = '';
+    if (empty) { empty.style.display = 'block'; empty.textContent = t('schedNoClasses'); }
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+  list.innerHTML = day.events.map(ev => {
+    const upcoming = ev.startMin >= nowMin;
+    return `<div class="sched-event ${ev.badge === 'online' ? 'online' : ''}" style="${upcoming ? '' : 'opacity:.55'}">
+      <div class="sched-time">${escapeHtml(ev.time)}${upcoming && ev.startMin - nowMin <= 90 ? ' · ' + t('schedNext') : ''}</div>
+      <div class="sched-title">${escapeHtml(ev.title)}</div>
+      <div class="sched-meta"><span class="sched-badge ${ev.badge}">${escapeHtml(badgeLabel(ev.badge))}</span>
+      <span>📍 ${escapeHtml(ev.location)}</span></div>
+    </div>`;
+  }).join('');
+}
+async function saveSchedule(data) {
+  scheduleData = data;
+  try { await Storage.set(SCHED_KEY, data); } catch(e) {
+    try { localStorage.setItem(SCHED_KEY, JSON.stringify(data)); } catch(e2){}
+  }
+  renderScheduleList();
+  renderTodayClasses();
+}
+async function loadSavedSchedule() {
+  let data = null;
+  try { data = await Storage.get(SCHED_KEY); } catch(e){}
+  if (!data) {
+    try { data = JSON.parse(localStorage.getItem(SCHED_KEY) || 'null'); } catch(e){}
+  }
+  scheduleData = Array.isArray(data) ? data : [];
+  renderScheduleList();
+  renderTodayClasses();
+}
+function setupScheduleUI() {
+  document.getElementById('ics-file')?.addEventListener('change', function(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const status = document.getElementById('sched-status');
+    if (status) status.textContent = '…';
+    const reader = new FileReader();
+    reader.onload = async function(ev) {
+      try {
+        const content = ev.target.result;
+        if (!content.includes('BEGIN:VEVENT') && !content.includes('BEGIN:VCALENDAR')) throw new Error('not ics');
+        const raw = parseICS(content);
+        if (!raw.length) throw new Error('empty');
+        const built = buildScheduleFromEvents(raw);
+        await saveSchedule(built);
+        if (status) status.textContent = t('schedLoaded') + ': ' + raw.length;
+      } catch (err) {
+        console.warn(err);
+        if (status) status.textContent = t('schedError');
+      }
+    };
+    reader.onerror = () => { const s = document.getElementById('sched-status'); if (s) s.textContent = t('schedError'); };
+    reader.readAsText(file, 'UTF-8');
+  });
+  document.getElementById('sched-clear-btn')?.addEventListener('click', async () => {
+    await saveSchedule([]);
+    const status = document.getElementById('sched-status');
+    if (status) status.textContent = t('schedCleared');
+    const input = document.getElementById('ics-file');
+    if (input) input.value = '';
+  });
+}
+
+
 async function init(){
   initTheme();
   let stored = null;
@@ -1864,9 +2186,12 @@ async function init(){
   renderQuickLinks();
   renderCampus();
   renderBuses();
+  setupScheduleUI();
+  await loadSavedSchedule();
   renderDaySelector();
   await loadAndRenderMenu();
   await renderTodayBlock();
+  renderTodayClasses();
   await loadDiscountsFromRepo();
   try { favorites = (await Storage.get('discount-favorites')) || []; } catch (e) { favorites = []; }
   try { kosiceOnly = !!(await Storage.get('kosice-only')); } catch(e){}
