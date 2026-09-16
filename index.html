@@ -318,9 +318,15 @@
 
   .sched-upload{border:1px dashed var(--border);border-radius:.75rem;padding:1rem;text-align:center;margin-bottom:.75rem;background:var(--card-bg)}
   .sched-upload input[type=file]{
-    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
-    clip:rect(0,0,0,0);border:0;opacity:0;
+    display:block;width:100%;max-width:22rem;margin:.65rem auto 0;
+    padding:.55rem;font-size:.85rem;color:var(--text);
+    background:var(--slate-900);border:1px solid var(--border);border-radius:.55rem;
   }
+  [data-theme="light"] .sched-upload input[type=file]{background:#fff}
+  .tg-browser-hint{display:none;margin:.5rem 0;padding:.65rem;border-radius:.55rem;
+    background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.35);font-size:.78rem;line-height:1.4}
+  html.tg-viewport .tg-browser-hint{display:block}
+
   .sched-paste{width:100%;min-height:5.5rem;margin-top:.65rem;background:var(--slate-900);border:1px solid var(--border);
     border-radius:.5rem;padding:.6rem;color:var(--text);font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;resize:vertical}
   [data-theme="light"] .sched-paste{background:#fff;color:#0f172a}
@@ -452,14 +458,22 @@
     </div>
     <div class="section-body" id="schedule-body">
       <div class="sched-upload" style="position:relative">
-        <button type="button" class="btn btn-primary" id="ics-pick-btn" data-i18n="schedUpload">📁 Upload ICS from MAIS</button>
-        <input type="file" id="ics-file" accept="*/*" multiple="false">
-        <p class="muted" style="margin:.5rem 0 0;font-size:.75rem" data-i18n="schedUploadHint"></p>
-        <p class="muted" style="margin:.35rem 0 0;font-size:.72rem" data-i18n="schedPasteHint"></p>
-        <textarea id="ics-paste" class="sched-paste" data-i18n-placeholder="schedPastePlaceholder" placeholder="BEGIN:VCALENDAR ..."></textarea>
-        <div class="sched-upload-actions">
-          <button type="button" class="btn btn-primary" id="ics-paste-btn" data-i18n="schedPasteBtn">Load from text</button>
+        <p class="muted" style="margin:0 0 .35rem;font-size:.75rem" data-i18n="schedUploadHint"></p>
+        <div class="tg-browser-hint" id="tg-browser-hint">
+          <span data-i18n="schedTgHint"></span>
+          <div style="margin-top:.45rem">
+            <button type="button" class="btn btn-primary" id="sched-open-browser" data-i18n="schedOpenBrowser" style="width:100%">Open in browser</button>
+          </div>
         </div>
+        <input type="file" id="ics-file">
+        <p class="muted" style="margin:.45rem 0 0;font-size:.72rem" data-i18n="schedFileHelp"></p>
+        <details style="margin-top:.65rem;text-align:left">
+          <summary class="muted" style="cursor:pointer;font-size:.75rem" data-i18n="schedPasteSummary">Or paste ICS text</summary>
+          <textarea id="ics-paste" class="sched-paste" data-i18n-placeholder="schedPastePlaceholder" placeholder="BEGIN:VCALENDAR ..."></textarea>
+          <div class="sched-upload-actions">
+            <button type="button" class="btn btn-primary" id="ics-paste-btn" data-i18n="schedPasteBtn">Load from text</button>
+          </div>
+        </details>
         <p class="muted" id="sched-status" style="margin:.35rem 0 0;font-size:.75rem"></p>
       </div>
       <div id="schedule-list"></div>
@@ -725,6 +739,11 @@ en: {
   schedPasteHint:"On Android/Telegram: if file picker fails, open the .ics in a text app → copy all → paste below.",
   schedPastePlaceholder:"Paste full ICS text here (BEGIN:VCALENDAR … END:VCALENDAR)",
   schedPasteBtn:"Load from text",
+  schedTgHint:"Telegram blocks file pickers on Android. Open this page in Chrome — then you can select the .ICS file normally.",
+  schedOpenBrowser:"🌐 Open in Chrome / browser",
+  schedFileHelp:"Tap the field above and choose report0.ICS from Downloads. If files are grey — use the browser button.",
+  schedPasteSummary:"Or paste ICS text",
+  
   schedClear:"Clear", schedLoaded:"Loaded events", schedEmpty:"No schedule yet — upload an ICS file from MAIS.",
   schedError:"Could not read ICS file", schedCleared:"Schedule cleared",
   schedNoClasses:"No classes today", schedNext:"Next class",
@@ -800,6 +819,11 @@ ru: {
   schedPasteHint:"На Android/Telegram: если файл не выбирается — открой .ics в текстовом приложении → копируй всё → вставь ниже.",
   schedPastePlaceholder:"Вставь сюда весь текст ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
   schedPasteBtn:"Загрузить из текста",
+  schedTgHint:"Telegram на Android блокирует выбор файлов. Открой эту страницу в Chrome — там .ICS выбирается нормально.",
+  schedOpenBrowser:"🌐 Открыть в Chrome / браузере",
+  schedFileHelp:"Нажми поле выше и выбери report0.ICS из Загрузок. Если файлы серые — кнопка «в браузере».",
+  schedPasteSummary:"Или вставить текст ICS",
+  
   schedClear:"Очистить", schedLoaded:"Загружено событий", schedEmpty:"Расписания пока нет — загрузи ICS из MAIS.",
   schedError:"Не удалось прочитать ICS", schedCleared:"Расписание очищено",
   schedNoClasses:"Сегодня пар нет", schedNext:"Следующая пара",
@@ -875,6 +899,11 @@ uk: {
   schedPasteHint:"На Android/Telegram: якщо файл не вибирається — відкрий .ics у текстовому додатку → копіюй усе → встав нижче.",
   schedPastePlaceholder:"Встав сюди весь текст ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
   schedPasteBtn:"Завантажити з тексту",
+  schedTgHint:"Telegram на Android блокує вибір файлів. Відкрий цю сторінку в Chrome — там .ICS обирається нормально.",
+  schedOpenBrowser:"🌐 Відкрити в Chrome / браузері",
+  schedFileHelp:"Натисни поле вище і вибери report0.ICS із Завантажень. Якщо файли сірі — кнопка «у браузері».",
+  schedPasteSummary:"Або вставити текст ICS",
+  
   schedClear:"Очистити", schedLoaded:"Завантажено подій", schedEmpty:"Розкладу ще немає — завантаж ICS з MAIS.",
   schedError:"Не вдалося прочитати ICS", schedCleared:"Розклад очищено",
   schedNoClasses:"Сьогодні пар немає", schedNext:"Наступна пара",
@@ -950,6 +979,11 @@ sk: {
   schedPasteHint:"Na Androide/Telegram: ak sa súbor nedá vybrať — otvor .ics v textovej appke → skopíruj všetko → vlož nižšie.",
   schedPastePlaceholder:"Vlož sem celý text ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
   schedPasteBtn:"Načítať z textu",
+  schedTgHint:"Telegram na Androide blokuje výber súborov. Otvor túto stránku v Chrome — tam sa .ICS dá vybrať normálne.",
+  schedOpenBrowser:"🌐 Otvoriť v Chrome / prehliadači",
+  schedFileHelp:"Klepni na pole vyššie a vyber report0.ICS z priečinka Stiahnuté. Ak sú súbory sivé — tlačidlo prehliadača.",
+  schedPasteSummary:"Alebo vložiť text ICS",
+  
   schedClear:"Vymazať", schedLoaded:"Načítané udalosti", schedEmpty:"Zatiaľ žiadny rozvrh — nahraj ICS z MAIS.",
   schedError:"ICS sa nepodarilo načítať", schedCleared:"Rozvrh vymazaný",
   schedNoClasses:"Dnes žiadne hodiny", schedNext:"Ďalšia hodina",
@@ -2228,17 +2262,15 @@ async function importIcsText(content) {
 }
 function setupScheduleUI() {
   const input = document.getElementById('ics-file');
-  const pickBtn = document.getElementById('ics-pick-btn');
-  // Android/Telegram: open picker via explicit button click (label+display:none often fails)
-  pickBtn?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (!input) return;
-    try { input.value = ''; } catch (err) {}
-    input.click();
-  });
+  // No accept= filter — Android often greys out .ICS when MIME doesn't match
+  if (input) {
+    try { input.removeAttribute('accept'); } catch (e) {}
+  }
   input?.addEventListener('change', function(e) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+    const status = document.getElementById('sched-status');
+    if (status) status.textContent = (file.name || 'ICS') + '…';
     const reader = new FileReader();
     reader.onload = function(ev) { importIcsText(ev.target.result); };
     reader.onerror = () => { const s = document.getElementById('sched-status'); if (s) s.textContent = t('schedError'); };
@@ -2247,6 +2279,16 @@ function setupScheduleUI() {
   document.getElementById('ics-paste-btn')?.addEventListener('click', () => {
     const ta = document.getElementById('ics-paste');
     importIcsText(ta ? ta.value : '');
+  });
+  document.getElementById('sched-open-browser')?.addEventListener('click', () => {
+    const url = location.href.split('#')[0];
+    try {
+      if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.openLink === 'function') {
+        Telegram.WebApp.openLink(url);
+        return;
+      }
+    } catch (e) {}
+    window.open(url, '_blank');
   });
   document.getElementById('sched-clear-btn')?.addEventListener('click', async () => {
     await saveSchedule([]);
