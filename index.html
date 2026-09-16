@@ -1129,6 +1129,37 @@ const THEME_ORDER = ['dark', 'light', 'night'];
 const THEME_ICON = { dark: '☀️', light: '🌙', night: '⬛' };
 const THEME_COLOR = { dark: '#0f172a', light: '#f1f5f9', night: '#000000' };
 
+function normalizeTheme(raw){
+  if (!raw) return '';
+  let s = String(raw).trim();
+  // Storage.set used to JSON.stringify and overwrite → "night" with quotes
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1);
+  }
+  return THEME_ORDER.includes(s) ? s : '';
+}
+function saveTheme(theme){
+  try { localStorage.setItem('tuke-hub:theme-v2', theme); } catch(e){}
+  try { localStorage.setItem('tuke-hub:theme', theme); } catch(e){}
+  try {
+    const maxAge = 60 * 60 * 24 * 365;
+    document.cookie = 'tuke_hub_theme=' + encodeURIComponent(theme) + ';path=/;max-age=' + maxAge + ';SameSite=Lax';
+  } catch(e){}
+}
+function readSavedTheme(){
+  let theme = '';
+  try { theme = normalizeTheme(localStorage.getItem('tuke-hub:theme-v2')); } catch(e){}
+  if (!theme) {
+    try { theme = normalizeTheme(localStorage.getItem('tuke-hub:theme')); } catch(e){}
+  }
+  if (!theme) {
+    try {
+      const m = document.cookie.match(/(?:^|; )tuke_hub_theme=([^;]*)/);
+      if (m) theme = normalizeTheme(decodeURIComponent(m[1]));
+    } catch(e){}
+  }
+  return theme;
+}
 function applyTheme(theme){
   if (!THEME_ORDER.includes(theme)) theme = 'dark';
   document.documentElement.setAttribute('data-theme', theme);
@@ -1139,12 +1170,7 @@ function applyTheme(theme){
   }
   const meta = document.querySelector('meta[name="theme-color"]:not([media])');
   if (meta) meta.setAttribute('content', THEME_COLOR[theme] || '#0f172a');
-  try {
-    localStorage.setItem('tuke-hub:theme', theme);
-  } catch(e){}
-  try {
-    if (typeof Storage !== 'undefined' && Storage.set) Storage.set('theme', theme);
-  } catch(e){}
+  saveTheme(theme);
   try {
     if (window.Telegram && Telegram.WebApp) {
       const c = THEME_COLOR[theme] || '#0f172a';
@@ -1158,11 +1184,8 @@ function nextTheme(current){
   return THEME_ORDER[(i + 1) % THEME_ORDER.length];
 }
 function initTheme(){
-  let theme = 'dark';
-  try {
-    theme = localStorage.getItem('tuke-hub:theme') || '';
-  } catch(e){ theme = ''; }
-  if (!theme || !THEME_ORDER.includes(theme)) {
+  let theme = readSavedTheme();
+  if (!theme) {
     try {
       theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     } catch(e){ theme = 'dark'; }
