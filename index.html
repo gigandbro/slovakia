@@ -317,15 +317,27 @@
 
 
   .sched-upload{border:1px dashed var(--border);border-radius:.75rem;padding:1rem;text-align:center;margin-bottom:.75rem;background:var(--card-bg)}
+  /* Desktop: hide native input, use button */
   .sched-upload input[type=file]{
-    display:block;width:100%;max-width:22rem;margin:.65rem auto 0;
-    padding:.55rem;font-size:.85rem;color:var(--text);
-    background:var(--slate-900);border:1px solid var(--border);border-radius:.55rem;
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);border:0;opacity:0;
   }
-  [data-theme="light"] .sched-upload input[type=file]{background:#fff}
+  /* Android Chrome: visible system picker control (more reliable) */
+  html.android-webview .sched-upload input[type=file],
+  html.is-android .sched-upload input[type=file]{
+    position:static;width:100%;max-width:22rem;height:auto;margin:.65rem auto 0;
+    padding:.55rem;font-size:16px;color:var(--text);opacity:1;clip:auto;overflow:visible;
+    background:var(--slate-900);border:1px solid var(--border);border-radius:.55rem;display:block;
+  }
+  [data-theme="light"] html.android-webview .sched-upload input[type=file],
+  [data-theme="light"] html.is-android .sched-upload input[type=file]{background:#fff}
+  html.android-webview #ics-pick-btn,
+  html.is-android #ics-pick-btn{display:none}
   .tg-browser-hint{display:none;margin:.5rem 0;padding:.65rem;border-radius:.55rem;
     background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.35);font-size:.78rem;line-height:1.4}
   html.tg-viewport .tg-browser-hint{display:block}
+  .sched-extra{margin-top:.5rem}
+  html:not(.is-android):not(.tg-viewport) .sched-extra{display:none}
 
   .sched-paste{width:100%;min-height:5.5rem;margin-top:.65rem;background:var(--slate-900);border:1px solid var(--border);
     border-radius:.5rem;padding:.6rem;color:var(--text);font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;resize:vertical}
@@ -458,22 +470,25 @@
     </div>
     <div class="section-body" id="schedule-body">
       <div class="sched-upload" style="position:relative">
-        <p class="muted" style="margin:0 0 .35rem;font-size:.75rem" data-i18n="schedUploadHint"></p>
+        <button type="button" class="btn btn-primary" id="ics-pick-btn" data-i18n="schedUpload">📁 Upload ICS from MAIS</button>
+        <input type="file" id="ics-file">
+        <p class="muted" style="margin:.5rem 0 0;font-size:.75rem" data-i18n="schedUploadHint"></p>
         <div class="tg-browser-hint" id="tg-browser-hint">
           <span data-i18n="schedTgHint"></span>
           <div style="margin-top:.45rem">
             <button type="button" class="btn btn-primary" id="sched-open-browser" data-i18n="schedOpenBrowser" style="width:100%">Open in browser</button>
           </div>
         </div>
-        <input type="file" id="ics-file">
-        <p class="muted" style="margin:.45rem 0 0;font-size:.72rem" data-i18n="schedFileHelp"></p>
-        <details style="margin-top:.65rem;text-align:left">
-          <summary class="muted" style="cursor:pointer;font-size:.75rem" data-i18n="schedPasteSummary">Or paste ICS text</summary>
-          <textarea id="ics-paste" class="sched-paste" data-i18n-placeholder="schedPastePlaceholder" placeholder="BEGIN:VCALENDAR ..."></textarea>
-          <div class="sched-upload-actions">
-            <button type="button" class="btn btn-primary" id="ics-paste-btn" data-i18n="schedPasteBtn">Load from text</button>
-          </div>
-        </details>
+        <div class="sched-extra">
+          <p class="muted" style="margin:.45rem 0 0;font-size:.72rem" data-i18n="schedFileHelp"></p>
+          <details style="margin-top:.55rem;text-align:left">
+            <summary class="muted" style="cursor:pointer;font-size:.75rem" data-i18n="schedPasteSummary">Or paste ICS text</summary>
+            <textarea id="ics-paste" class="sched-paste" data-i18n-placeholder="schedPastePlaceholder" placeholder="BEGIN:VCALENDAR ..."></textarea>
+            <div class="sched-upload-actions">
+              <button type="button" class="btn btn-primary" id="ics-paste-btn" data-i18n="schedPasteBtn">Load from text</button>
+            </div>
+          </details>
+        </div>
         <p class="muted" id="sched-status" style="margin:.35rem 0 0;font-size:.75rem"></p>
       </div>
       <div id="schedule-list"></div>
@@ -650,7 +665,10 @@
   const isAndroid = /Android/i.test(ua);
   const isTg = !!(window.Telegram && Telegram.WebApp) || /Telegram/i.test(ua);
   if (isIOS) document.documentElement.classList.add('ios-webview');
-  if (isAndroid) document.documentElement.classList.add('android-webview');
+  if (isAndroid) {
+    document.documentElement.classList.add('android-webview');
+    document.documentElement.classList.add('is-android');
+  }
   if (!window.Telegram || !Telegram.WebApp) return;
   const tg = Telegram.WebApp;
   try {
@@ -2262,10 +2280,18 @@ async function importIcsText(content) {
 }
 function setupScheduleUI() {
   const input = document.getElementById('ics-file');
-  // No accept= filter — Android often greys out .ICS when MIME doesn't match
+  const pickBtn = document.getElementById('ics-pick-btn');
+  // Critical on Android Chrome: no accept filter (greyed .ICS otherwise)
   if (input) {
     try { input.removeAttribute('accept'); } catch (e) {}
   }
+  // PC / iOS: classic button opens picker
+  pickBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!input) return;
+    try { input.value = ''; } catch (err) {}
+    input.click();
+  });
   input?.addEventListener('change', function(e) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
