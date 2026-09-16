@@ -42,6 +42,62 @@
     --card-bg:#f8fafc;--page-bg:#f1f5f9;--text:#0f172a;--muted:#64748b;
     --border:#e2e8f0;--header-bg:rgba(255,255,255,.92);
   }
+  /* Night / AMOLED: blues → black, accents → white/gray */
+  [data-theme="night"]{
+    --slate-100:#fafafa;--slate-200:#e5e5e5;--slate-300:#d4d4d4;--slate-400:#a3a3a3;
+    --slate-500:#737373;--slate-600:#525252;--slate-700:#2a2a2a;--slate-800:#121212;--slate-900:#000000;
+    --blue-300:#e5e5e5;--blue-400:#f5f5f5;--blue-500:#ffffff;--blue-600:#e5e5e5;
+    --emerald-300:#d4d4d4;--emerald-400:#e5e5e5;--emerald-500:#f5f5f5;
+    --amber-400:#fafafa;--purple-400:#e5e5e5;--red-400:#f5f5f5;
+    --card-bg:#0a0a0a;--page-bg:#000000;--text:#f5f5f5;--muted:#a3a3a3;
+    --border:#262626;--header-bg:rgba(0,0,0,.94);
+  }
+  [data-theme="night"] header{background:var(--header-bg);border-color:var(--border)}
+  [data-theme="night"] .card,
+  [data-theme="night"] .menu-item,
+  [data-theme="night"] .discount-card,
+  [data-theme="night"] .dpmk-card,
+  [data-theme="night"] .quick-link,
+  [data-theme="night"] .campus-item,
+  [data-theme="night"] .sched-event,
+  [data-theme="night"] .news-card,
+  [data-theme="night"] .install-card,
+  [data-theme="night"] .nearby-box,
+  [data-theme="night"] .sched-upload{background:var(--card-bg);border-color:var(--border)}
+  [data-theme="night"] .chip{background:#111;border-color:var(--border);color:#e5e5e5}
+  [data-theme="night"] .chip.active,
+  [data-theme="night"] .toggle-chip.active{background:#fff;color:#000;border-color:#fff}
+  [data-theme="night"] .btn-primary{background:#fff;color:#000}
+  [data-theme="night"] .btn-primary:active{background:#e5e5e5}
+  [data-theme="night"] .logo{background:#fff;color:#000}
+  [data-theme="night"] .brand h1,
+  [data-theme="night"] .clock b{color:#fff}
+  [data-theme="night"] a.link,
+  [data-theme="night"] .news-card a{color:#fff}
+  [data-theme="night"] .sched-badge.online,
+  [data-theme="night"] .sched-badge.prednaska,
+  [data-theme="night"] .sched-badge.cvicenie,
+  [data-theme="night"] .sched-badge.project{background:#222;color:#fff;border:1px solid #444}
+  [data-theme="night"] .sched-event{border-left-color:#fff}
+  [data-theme="night"] .sched-event.online,
+  [data-theme="night"] .sched-event.cvicenie,
+  [data-theme="night"] .sched-event.project{border-left-color:#e5e5e5}
+  [data-theme="night"] input[type=text],
+  [data-theme="night"] input[type=number],
+  [data-theme="night"] .sched-paste,
+  [data-theme="night"] .savings-row input{background:#111;color:#f5f5f5;border-color:#333}
+  [data-theme="night"] .badge.open{background:#222;color:#fff}
+  [data-theme="night"] .badge.closed{background:#111;color:#a3a3a3}
+  [data-theme="night"] .fav-btn.active{color:#fff}
+  [data-theme="night"] .credit-line a,
+  [data-theme="night"] .credit-line strong{color:#fff}
+  [data-theme="night"] .offline-banner{background:rgba(255,255,255,.08);border-color:#444;color:#e5e5e5}
+  /* Mobile theme polish */
+  @media (max-width:480px){
+    [data-theme="night"] .quick-link,
+    [data-theme="light"] .quick-link{min-height:64px}
+  }
+
   html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   body{
     background:var(--page-bg);color:var(--text);
@@ -1069,19 +1125,52 @@ const Storage = {
 
 
 /* Theme */
+const THEME_ORDER = ['dark', 'light', 'night'];
+const THEME_ICON = { dark: '☀️', light: '🌙', night: '⬛' };
+const THEME_COLOR = { dark: '#0f172a', light: '#f1f5f9', night: '#000000' };
+
 function applyTheme(theme){
+  if (!THEME_ORDER.includes(theme)) theme = 'dark';
   document.documentElement.setAttribute('data-theme', theme);
   const btn = document.getElementById('theme-btn');
-  if (btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
-  try { localStorage.setItem('tuke-hub:theme', theme); } catch(e){}
+  if (btn) {
+    btn.textContent = THEME_ICON[theme] || '☀️';
+    btn.title = 'Theme: ' + theme;
+  }
+  const meta = document.querySelector('meta[name="theme-color"]:not([media])');
+  if (meta) meta.setAttribute('content', THEME_COLOR[theme] || '#0f172a');
+  try {
+    localStorage.setItem('tuke-hub:theme', theme);
+  } catch(e){}
+  try {
+    if (typeof Storage !== 'undefined' && Storage.set) Storage.set('theme', theme);
+  } catch(e){}
+  try {
+    if (window.Telegram && Telegram.WebApp) {
+      const c = THEME_COLOR[theme] || '#0f172a';
+      Telegram.WebApp.setHeaderColor && Telegram.WebApp.setHeaderColor(c);
+      Telegram.WebApp.setBackgroundColor && Telegram.WebApp.setBackgroundColor(c);
+    }
+  } catch(e){}
+}
+function nextTheme(current){
+  const i = THEME_ORDER.indexOf(current);
+  return THEME_ORDER[(i + 1) % THEME_ORDER.length];
 }
 function initTheme(){
   let theme = 'dark';
-  try { theme = localStorage.getItem('tuke-hub:theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'); } catch(e){}
+  try {
+    theme = localStorage.getItem('tuke-hub:theme') || '';
+  } catch(e){ theme = ''; }
+  if (!theme || !THEME_ORDER.includes(theme)) {
+    try {
+      theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    } catch(e){ theme = 'dark'; }
+  }
   applyTheme(theme);
   document.getElementById('theme-btn')?.addEventListener('click', () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    applyTheme(next);
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    applyTheme(nextTheme(cur));
   });
 }
 
