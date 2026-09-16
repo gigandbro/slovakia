@@ -317,7 +317,14 @@
 
 
   .sched-upload{border:1px dashed var(--border);border-radius:.75rem;padding:1rem;text-align:center;margin-bottom:.75rem;background:var(--card-bg)}
-  .sched-upload input[type=file]{display:none}
+  .sched-upload input[type=file]{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);border:0;opacity:0;
+  }
+  .sched-paste{width:100%;min-height:5.5rem;margin-top:.65rem;background:var(--slate-900);border:1px solid var(--border);
+    border-radius:.5rem;padding:.6rem;color:var(--text);font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+  [data-theme="light"] .sched-paste{background:#fff;color:#0f172a}
+  .sched-upload-actions{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin-top:.5rem}
   .sched-day{margin-bottom:.75rem}
   .sched-day h3{margin:0 0 .4rem;font-size:.85rem;color:var(--blue-400)}
   .sched-event{background:var(--card-bg);border:1px solid var(--border);border-left:4px solid var(--blue-500);border-radius:.5rem;padding:.65rem .75rem;margin-bottom:.45rem}
@@ -444,10 +451,15 @@
       </div>
     </div>
     <div class="section-body" id="schedule-body">
-      <div class="sched-upload">
-        <label for="ics-file" class="btn btn-primary" style="cursor:pointer" data-i18n="schedUpload">📁 Upload ICS from MAIS</label>
-        <input type="file" id="ics-file" accept=".ics,text/calendar">
+      <div class="sched-upload" style="position:relative">
+        <button type="button" class="btn btn-primary" id="ics-pick-btn" data-i18n="schedUpload">📁 Upload ICS from MAIS</button>
+        <input type="file" id="ics-file" accept="*/*" multiple="false">
         <p class="muted" style="margin:.5rem 0 0;font-size:.75rem" data-i18n="schedUploadHint"></p>
+        <p class="muted" style="margin:.35rem 0 0;font-size:.72rem" data-i18n="schedPasteHint"></p>
+        <textarea id="ics-paste" class="sched-paste" data-i18n-placeholder="schedPastePlaceholder" placeholder="BEGIN:VCALENDAR ..."></textarea>
+        <div class="sched-upload-actions">
+          <button type="button" class="btn btn-primary" id="ics-paste-btn" data-i18n="schedPasteBtn">Load from text</button>
+        </div>
         <p class="muted" id="sched-status" style="margin:.35rem 0 0;font-size:.75rem"></p>
       </div>
       <div id="schedule-list"></div>
@@ -710,6 +722,9 @@ en: {
   linesLabel:"Lines:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Quick links",   headingSchedule:"My schedule", headingClassesToday:"Classes today",
   schedUpload:"📁 Upload ICS from MAIS", schedUploadHint:"MAIS → calendar export → .ics file. Saved on this device.",
+  schedPasteHint:"On Android/Telegram: if file picker fails, open the .ics in a text app → copy all → paste below.",
+  schedPastePlaceholder:"Paste full ICS text here (BEGIN:VCALENDAR … END:VCALENDAR)",
+  schedPasteBtn:"Load from text",
   schedClear:"Clear", schedLoaded:"Loaded events", schedEmpty:"No schedule yet — upload an ICS file from MAIS.",
   schedError:"Could not read ICS file", schedCleared:"Schedule cleared",
   schedNoClasses:"No classes today", schedNext:"Next class",
@@ -782,6 +797,9 @@ ru: {
   linesLabel:"Маршруты:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Быстрые ссылки",   headingSchedule:"Моё расписание", headingClassesToday:"Пары сегодня",
   schedUpload:"📁 Загрузить ICS из MAIS", schedUploadHint:"MAIS → экспорт календаря → файл .ics. Сохраняется на этом устройстве.",
+  schedPasteHint:"На Android/Telegram: если файл не выбирается — открой .ics в текстовом приложении → копируй всё → вставь ниже.",
+  schedPastePlaceholder:"Вставь сюда весь текст ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
+  schedPasteBtn:"Загрузить из текста",
   schedClear:"Очистить", schedLoaded:"Загружено событий", schedEmpty:"Расписания пока нет — загрузи ICS из MAIS.",
   schedError:"Не удалось прочитать ICS", schedCleared:"Расписание очищено",
   schedNoClasses:"Сегодня пар нет", schedNext:"Следующая пара",
@@ -854,6 +872,9 @@ uk: {
   linesLabel:"Маршрути:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Швидкі посилання",   headingSchedule:"Мій розклад", headingClassesToday:"Пари сьогодні",
   schedUpload:"📁 Завантажити ICS з MAIS", schedUploadHint:"MAIS → експорт календаря → файл .ics. Зберігається на цьому пристрої.",
+  schedPasteHint:"На Android/Telegram: якщо файл не вибирається — відкрий .ics у текстовому додатку → копіюй усе → встав нижче.",
+  schedPastePlaceholder:"Встав сюди весь текст ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
+  schedPasteBtn:"Завантажити з тексту",
   schedClear:"Очистити", schedLoaded:"Завантажено подій", schedEmpty:"Розкладу ще немає — завантаж ICS з MAIS.",
   schedError:"Не вдалося прочитати ICS", schedCleared:"Розклад очищено",
   schedNoClasses:"Сьогодні пар немає", schedNext:"Наступна пара",
@@ -926,6 +947,9 @@ sk: {
   linesLabel:"Linky:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
     headingQuick:"Rýchle odkazy",   headingSchedule:"Môj rozvrh", headingClassesToday:"Hodiny dnes",
   schedUpload:"📁 Nahrať ICS z MAIS", schedUploadHint:"MAIS → export kalendára → súbor .ics. Uloží sa v tomto zariadení.",
+  schedPasteHint:"Na Androide/Telegram: ak sa súbor nedá vybrať — otvor .ics v textovej appke → skopíruj všetko → vlož nižšie.",
+  schedPastePlaceholder:"Vlož sem celý text ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
+  schedPasteBtn:"Načítať z textu",
   schedClear:"Vymazať", schedLoaded:"Načítané udalosti", schedEmpty:"Zatiaľ žiadny rozvrh — nahraj ICS z MAIS.",
   schedError:"ICS sa nepodarilo načítať", schedCleared:"Rozvrh vymazaný",
   schedNoClasses:"Dnes žiadne hodiny", schedNext:"Ďalšia hodina",
@@ -1014,6 +1038,10 @@ function t(key){ return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; 
 
 function applyStaticTranslations(){
   document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const k = el.getAttribute('data-i18n-placeholder');
+    if (k) el.setAttribute('placeholder', t(k));
+  });
   document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
   document.getElementById('discount-search').placeholder = t('searchPlaceholder');
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
@@ -2179,36 +2207,54 @@ async function loadSavedSchedule() {
   renderScheduleList();
   renderTodayClasses();
 }
+async function importIcsText(content) {
+  const status = document.getElementById('sched-status');
+  if (status) status.textContent = '…';
+  try {
+    if (!content || (!content.includes('BEGIN:VEVENT') && !content.includes('BEGIN:VCALENDAR'))) throw new Error('not ics');
+    const raw = parseICS(content);
+    if (!raw.length) throw new Error('empty');
+    const built = buildScheduleFromEvents(raw);
+    await saveSchedule(built);
+    if (status) status.textContent = t('schedLoaded') + ': ' + raw.length;
+    const ta = document.getElementById('ics-paste');
+    if (ta) ta.value = '';
+    return true;
+  } catch (err) {
+    console.warn(err);
+    if (status) status.textContent = t('schedError');
+    return false;
+  }
+}
 function setupScheduleUI() {
-  document.getElementById('ics-file')?.addEventListener('change', function(e) {
+  const input = document.getElementById('ics-file');
+  const pickBtn = document.getElementById('ics-pick-btn');
+  // Android/Telegram: open picker via explicit button click (label+display:none often fails)
+  pickBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!input) return;
+    try { input.value = ''; } catch (err) {}
+    input.click();
+  });
+  input?.addEventListener('change', function(e) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const status = document.getElementById('sched-status');
-    if (status) status.textContent = '…';
     const reader = new FileReader();
-    reader.onload = async function(ev) {
-      try {
-        const content = ev.target.result;
-        if (!content.includes('BEGIN:VEVENT') && !content.includes('BEGIN:VCALENDAR')) throw new Error('not ics');
-        const raw = parseICS(content);
-        if (!raw.length) throw new Error('empty');
-        const built = buildScheduleFromEvents(raw);
-        await saveSchedule(built);
-        if (status) status.textContent = t('schedLoaded') + ': ' + raw.length;
-      } catch (err) {
-        console.warn(err);
-        if (status) status.textContent = t('schedError');
-      }
-    };
+    reader.onload = function(ev) { importIcsText(ev.target.result); };
     reader.onerror = () => { const s = document.getElementById('sched-status'); if (s) s.textContent = t('schedError'); };
     reader.readAsText(file, 'UTF-8');
+  });
+  document.getElementById('ics-paste-btn')?.addEventListener('click', () => {
+    const ta = document.getElementById('ics-paste');
+    importIcsText(ta ? ta.value : '');
   });
   document.getElementById('sched-clear-btn')?.addEventListener('click', async () => {
     await saveSchedule([]);
     const status = document.getElementById('sched-status');
     if (status) status.textContent = t('schedCleared');
-    const input = document.getElementById('ics-file');
     if (input) input.value = '';
+    const ta = document.getElementById('ics-paste');
+    if (ta) ta.value = '';
   });
 }
 
