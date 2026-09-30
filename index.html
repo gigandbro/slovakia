@@ -417,6 +417,17 @@
   .today-classes{margin-top:.75rem;padding-top:.65rem;border-top:1px solid var(--border)}
   .today-classes h4{margin:0 0 .4rem;font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 
+
+  .share-backup{
+    background:var(--card-bg);border:1px solid var(--border);border-radius:.85rem;
+    padding:1rem;margin:1.5rem 0 1rem;text-align:center;
+  }
+  .share-backup h2{margin:0 0 .75rem}
+  .qr-wrap{display:flex;flex-direction:column;align-items:center;gap:.5rem;margin:.75rem 0}
+  .qr-wrap img{width:180px;height:180px;border-radius:.5rem;background:#fff;padding:.4rem}
+  .backup-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.75rem}
+  .backup-actions .btn{min-height:44px}
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -676,6 +687,22 @@
   </section>
 
 
+
+  <section id="share-backup-section" class="share-backup">
+    <h2 data-i18n="headingShareBackup"></h2>
+    <p class="muted" style="margin:0 0 .5rem;font-size:.8rem" data-i18n="shareBackupDesc"></p>
+    <div class="qr-wrap">
+      <img id="hub-qr" alt="QR" width="180" height="180">
+      <button type="button" class="btn btn-ghost" id="copy-hub-link" data-i18n="copyHubLink" style="min-height:40px">Copy link</button>
+    </div>
+    <div class="backup-actions">
+      <button type="button" class="btn btn-primary" id="export-backup-btn" data-i18n="exportBackup">Export settings</button>
+      <button type="button" class="btn btn-ghost" id="import-backup-btn" data-i18n="importBackup">Import settings</button>
+      <input type="file" id="import-backup-file" accept="application/json,.json,text/plain" style="display:none">
+    </div>
+    <p class="muted" id="backup-status" style="margin:.5rem 0 0;font-size:.75rem"></p>
+  </section>
+
   <footer class="app-footer" id="app-footer">
     <h2 data-i18n="headingInstall"></h2>
     <div class="install-cards">
@@ -840,6 +867,15 @@ en: {
   iosGuideDetail:"1) Open this page in Safari → 2) Tap the Share button (square with arrow) at the bottom → 3) Scroll and tap «Add to Home Screen» → 4) Tap Add. Apple does not allow one-tap install from websites.",
   androidInstallHint:"If the button does nothing, use Chrome menu ⋮ → Install app.",
   linkCopied:"Link copied",
+    headingShareBackup:"Share & backup",
+  shareBackupDesc:"Show the QR to a classmate, or save your theme, language, schedule and favorites to a file.",
+  copyHubLink:"Copy Hub link",
+  exportBackup:"⬇ Export settings",
+  importBackup:"⬆ Import settings",
+  backupExported:"Backup downloaded",
+  backupImported:"Settings restored — reloading…",
+  backupError:"Could not read backup file",
+  linkCopied:"Link copied",
   headingInstall:"Install on your phone",
   androidStep1:"Open this site in Chrome",
   androidStep2:"Menu ⋮ → Install app / Add to Home screen",
@@ -919,6 +955,15 @@ ru: {
     androidInstallBtn:"⚡ Установить сейчас", iosInstallBtn:"Как добавить иконку", copyLinkBtn:"Скопировать ссылку",
   iosGuideDetail:"1) Открой эту страницу в Safari → 2) Нажми «Поделиться» (квадрат со стрелкой) внизу → 3) «На экран „Домой“» → 4) «Добавить». Apple не разрешает установку одной кнопкой с сайта.",
   androidInstallHint:"Если кнопка не сработала: Chrome → меню ⋮ → «Установить приложение».",
+  linkCopied:"Ссылка скопирована",
+    headingShareBackup:"Поделиться и бэкап",
+  shareBackupDesc:"Покажи QR одногруппнику или сохрани тему, язык, расписание и избранное в файл.",
+  copyHubLink:"Скопировать ссылку",
+  exportBackup:"⬇ Экспорт настроек",
+  importBackup:"⬆ Импорт настроек",
+  backupExported:"Файл бэкапа скачан",
+  backupImported:"Настройки восстановлены — обновление…",
+  backupError:"Не удалось прочитать файл бэкапа",
   linkCopied:"Ссылка скопирована",
   headingInstall:"Установить на телефон",
   androidStep1:"Открой сайт в Chrome",
@@ -1000,6 +1045,15 @@ uk: {
   iosGuideDetail:"1) Відкрий цю сторінку в Safari → 2) Натисни «Поділитися» (квадрат зі стрілкою) внизу → 3) «На екран „Домівки“» → 4) «Додати». Apple не дозволяє встановлення однією кнопкою з сайту.",
   androidInstallHint:"Якщо кнопка не спрацювала: Chrome → меню ⋮ → «Встановити застосунок».",
   linkCopied:"Посилання скопійовано",
+    headingShareBackup:"Поділитися і бекап",
+  shareBackupDesc:"Покажи QR одногрупнику або збережи тему, мову, розклад і обране у файл.",
+  copyHubLink:"Скопіювати посилання",
+  exportBackup:"⬇ Експорт налаштувань",
+  importBackup:"⬆ Імпорт налаштувань",
+  backupExported:"Файл бекапу завантажено",
+  backupImported:"Налаштування відновлено — оновлення…",
+  backupError:"Не вдалося прочитати файл бекапу",
+  linkCopied:"Посилання скопійовано",
   headingInstall:"Встановити на телефон",
   androidStep1:"Відкрий сайт у Chrome",
   androidStep2:"Меню ⋮ → «Встановити застосунок» / «На головний екран»",
@@ -1079,6 +1133,15 @@ sk: {
     androidInstallBtn:"⚡ Inštalovať teraz", iosInstallBtn:"Ako pridať ikonu", copyLinkBtn:"Kopírovať odkaz",
   iosGuideDetail:"1) Otvor túto stránku v Safari → 2) Klepni na Zdieľať (štvorec so šípkou) dole → 3) «Pridať na plochu» → 4) Pridať. Apple nedovoľuje inštaláciu jedným ťuknutím zo stránky.",
   androidInstallHint:"Ak tlačidlo nereaguje: Chrome → menu ⋮ → Inštalovať aplikáciu.",
+  linkCopied:"Odkaz skopírovaný",
+    headingShareBackup:"Zdieľať a záloha",
+  shareBackupDesc:"Ukáž QR spolužiakovi alebo ulož tému, jazyk, rozvrh a obľúbené do súboru.",
+  copyHubLink:"Kopírovať odkaz",
+  exportBackup:"⬇ Export nastavení",
+  importBackup:"⬆ Import nastavení",
+  backupExported:"Záloha stiahnutá",
+  backupImported:"Nastavenia obnovené — načítavam…",
+  backupError:"Zálohu sa nepodarilo načítať",
   linkCopied:"Odkaz skopírovaný",
   headingInstall:"Inštalácia do telefónu",
   androidStep1:"Otvor stránku v Chrome",
@@ -2439,6 +2502,130 @@ function setupScheduleUI() {
 }
 
 
+
+/* Share QR + backup export/import */
+function hubPageUrl(){
+  return location.href.split('#')[0].split('?')[0];
+}
+function renderHubQr(){
+  const img = document.getElementById('hub-qr');
+  if (!img) return;
+  const url = encodeURIComponent(hubPageUrl());
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=' + url;
+  img.alt = 'QR ' + hubPageUrl();
+}
+async function collectBackup(){
+  let schedule = scheduleData;
+  if (!schedule || !schedule.length) {
+    try { schedule = await Storage.get('tuke-hub:schedule-v2'); } catch(e){}
+    if (!schedule) {
+      try { schedule = JSON.parse(localStorage.getItem('tuke-hub:schedule-v2') || 'null'); } catch(e){ schedule = []; }
+    }
+  }
+  let favs = favorites;
+  try {
+    const f = await Storage.get('discount-favorites');
+    if (Array.isArray(f)) favs = f;
+  } catch(e){}
+  let theme = 'dark';
+  try { theme = localStorage.getItem('tuke-hub:theme-v2') || localStorage.getItem('tuke-hub:theme') || 'dark'; } catch(e){}
+  let kosice = false;
+  try { kosice = !!(await Storage.get('kosice-only')); } catch(e){}
+  return {
+    v: 1,
+    app: 'tuke-hub',
+    exportedAt: new Date().toISOString(),
+    theme: String(theme).replace(/^"|"$/g, ''),
+    lang: typeof lang !== 'undefined' ? lang : 'ru',
+    kosiceOnly: !!kosice,
+    newsNovinkyOnly: typeof newsNovinkyOnly === 'undefined' ? true : !!newsNovinkyOnly,
+    favorites: Array.isArray(favs) ? favs : [],
+    schedule: Array.isArray(schedule) ? schedule : [],
+    contacts: []
+  };
+}
+async function exportBackup(){
+  const status = document.getElementById('backup-status');
+  try {
+    const data = await collectBackup();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'tuke-hub-backup.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    if (status) status.textContent = t('backupExported');
+  } catch (e) {
+    console.warn(e);
+    if (status) status.textContent = t('backupError');
+  }
+}
+async function applyBackup(data){
+  if (!data || data.app !== 'tuke-hub') throw new Error('bad');
+  if (data.theme) {
+    try { applyTheme(String(data.theme).replace(/^"|"$/g, '')); } catch(e){}
+  }
+  if (data.lang && typeof setLang === 'function') {
+    try { await setLang(data.lang, true); } catch(e){
+      try { lang = data.lang; localStorage.setItem('tuke-hub:lang', data.lang); } catch(e2){}
+    }
+  } else if (data.lang) {
+    try { await Storage.set('lang', data.lang); lang = data.lang; } catch(e){}
+  }
+  if (Array.isArray(data.favorites)) {
+    favorites = data.favorites;
+    try { await Storage.set('discount-favorites', favorites); } catch(e){}
+  }
+  if (typeof data.kosiceOnly === 'boolean') {
+    kosiceOnly = data.kosiceOnly;
+    try { await Storage.set('kosice-only', kosiceOnly); } catch(e){}
+  }
+  if (typeof data.newsNovinkyOnly === 'boolean') {
+    newsNovinkyOnly = data.newsNovinkyOnly;
+    try { localStorage.setItem('tuke-hub:news-novinky', newsNovinkyOnly ? '1' : '0'); } catch(e){}
+  }
+  if (Array.isArray(data.schedule)) {
+    await saveSchedule(data.schedule);
+  }
+  location.reload();
+}
+function setupShareBackup(){
+  renderHubQr();
+  document.getElementById('copy-hub-link')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(hubPageUrl());
+      const st = document.getElementById('backup-status');
+      if (st) st.textContent = t('linkCopied');
+    } catch (e) {
+      prompt('URL', hubPageUrl());
+    }
+  });
+  document.getElementById('export-backup-btn')?.addEventListener('click', exportBackup);
+  document.getElementById('import-backup-btn')?.addEventListener('click', () => {
+    document.getElementById('import-backup-file')?.click();
+  });
+  document.getElementById('import-backup-file')?.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const status = document.getElementById('backup-status');
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const data = JSON.parse(reader.result);
+        if (status) status.textContent = t('backupImported');
+        await applyBackup(data);
+      } catch (err) {
+        console.warn(err);
+        if (status) status.textContent = t('backupError');
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  });
+}
+
+
 async function init(){
   initTheme();
   let stored = null;
@@ -2451,6 +2638,7 @@ async function init(){
   renderBuses();
   setupScheduleUI();
   await loadSavedSchedule();
+  setupShareBackup();
   renderDaySelector();
   await loadAndRenderMenu();
   await renderTodayBlock();
