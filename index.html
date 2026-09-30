@@ -428,6 +428,16 @@
   .backup-actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.75rem}
   .backup-actions .btn{min-height:44px}
 
+
+  .class-toggles{display:flex;flex-wrap:wrap;gap:.35rem;margin:.35rem 0 .5rem}
+  .class-toggles .toggle-chip{font-size:.72rem;min-height:34px}
+  html.session-mode [data-session-hide]{display:none !important}
+  .session-banner{display:none;margin:0 0 .75rem;padding:.5rem .75rem;border-radius:.55rem;
+    background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+  html.session-mode .session-banner{display:block}
+  #session-mode-btn.active{background:var(--blue-600);border-color:var(--blue-600);color:#fff}
+  [data-theme="night"] #session-mode-btn.active{background:#fff;color:#000;border-color:#fff}
+
   /* Mobile polish */
   @media (max-width: 480px) {
     .brand h1{font-size:.95rem}
@@ -467,6 +477,7 @@
       <h1>Kosice Student Hub</h1>
     </div>
     <div class="header-right">
+      <button type="button" class="theme-btn" id="session-mode-btn" title="Session mode" aria-label="Session mode">📚</button>
       <button type="button" class="theme-btn" id="theme-btn" title="Theme">☀️</button>
       <div class="clock">
         <span data-i18n="clockLabel"></span>
@@ -493,6 +504,8 @@
   </section>
 
   <!-- Today + Weather -->
+  <div class="session-banner" id="session-banner" data-i18n="sessionBanner">Session mode: news, discounts and extra blocks are hidden.</div>
+
   <section class="today-grid">
     <div class="card today-card">
       <h3 data-i18n="headingToday"></h3>
@@ -505,7 +518,10 @@
       <ul class="today-dishes" id="today-dishes"></ul>
       <p class="muted" id="today-empty" style="display:none;margin:.4rem 0 0;font-size:.8rem"></p>
       <div class="today-classes" id="today-classes-wrap" style="display:none">
-        <h4 data-i18n="headingClassesToday"></h4>
+        <h4 data-i18n="headingClassesToday" style="margin:0 0 .25rem"></h4>
+        <div class="class-toggles">
+          <button type="button" class="toggle-chip" id="hide-past-classes-btn">Скрыть прошедшие</button>
+        </div>
         <div id="today-classes"></div>
         <p class="muted" id="today-classes-empty" style="display:none;font-size:.8rem;margin:.3rem 0 0"></p>
       </div>
@@ -562,7 +578,7 @@
     </div>
   </section>
 
-  <section id="news-section">
+  <section id="news-section" data-session-hide>
     <div class="row-between">
       <h2 data-i18n="headingNews"></h2>
       <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap">
@@ -594,7 +610,7 @@
     </div>
   </section>
 
-  <section id="subsidy-section">
+  <section id="subsidy-section" data-session-hide>
     <div class="row-between">
       <h2 data-i18n="headingSubsidy" style="margin:0"></h2>
       <button type="button" class="collapse-btn" data-collapse="subsidy-body">▾</button>
@@ -620,7 +636,7 @@
     </div><!-- /subsidy-body -->
   </section>
 
-  <section id="discounts-section">
+  <section id="discounts-section" data-session-hide>
     <div class="row-between">
       <h2 data-i18n="headingMap" style="margin:0"></h2>
       <button type="button" class="btn btn-ghost" id="geo-btn" title="GPS">📍 <span data-i18n="geoBtn">My location</span></button>
@@ -642,7 +658,7 @@
     </div>
     <div id="category-filter" class="chip-row" style="margin-bottom:.75rem"></div>
 
-    <div class="nearby-box" id="nearby-box">
+    <div class="nearby-box" id="nearby-box" data-session-hide>
       <div class="row-between" style="margin-bottom:.35rem">
         <h3 data-i18n="headingNearby" style="margin:0">Nearby</h3>
         <button type="button" class="btn btn-primary" id="nearby-btn" data-i18n="nearbyBtn" style="min-height:40px;font-size:.75rem">📍 Find nearby</button>
@@ -661,7 +677,7 @@
     <p class="muted" id="discounts-source-note" style="margin-top:.5rem"></p>
   </section>
 
-  <section id="savings-section">
+  <section id="savings-section" data-session-hide>
     <h2 data-i18n="headingSavings"></h2>
     <div class="card savings-grid">
       <p class="muted" style="margin:0" data-i18n="savingsDesc"></p>
@@ -673,12 +689,12 @@
     </div>
   </section>
 
-  <section id="campus-section">
+  <section id="campus-section" data-session-hide>
     <h2 data-i18n="headingCampus"></h2>
     <div class="campus-grid" id="campus-list"></div>
   </section>
 
-  <section id="dpmk-section">
+  <section id="dpmk-section" data-session-hide>
     <h2 data-i18n="headingDPMK"></h2>
     <div id="dpmk-list"></div>
     <p class="muted" style="margin-top:.5rem" data-i18n="dpmkNote"></p>
@@ -688,7 +704,7 @@
 
 
 
-  <section id="share-backup-section" class="share-backup">
+  <section id="share-backup-section" data-session-hide class="share-backup">
     <h2 data-i18n="headingShareBackup"></h2>
     <p class="muted" style="margin:0 0 .5rem;font-size:.8rem" data-i18n="shareBackupDesc"></p>
     <div class="qr-wrap">
@@ -835,7 +851,7 @@ en: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Lines:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Quick links",   headingSchedule:"My schedule", headingClassesToday:"Classes today",
+    headingQuick:"Quick links",   headingSchedule:"My schedule", headingClassesToday:"Classes today", hidePastClasses:"Hide past", hidePastClassesOn:"Past hidden", sessionMode:"Session mode", sessionBanner:"Session mode on — news, discounts and extra blocks are hidden. Tap 📚 in the header to turn off.",
   schedUpload:"📁 Upload ICS from MAIS", schedUploadHint:"MAIS → calendar export → .ics file. Saved on this device.",
   schedPasteHint:"On Android/Telegram: if file picker fails, open the .ics in a text app → copy all → paste below.",
   schedPastePlaceholder:"Paste full ICS text here (BEGIN:VCALENDAR … END:VCALENDAR)",
@@ -924,7 +940,7 @@ ru: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Маршруты:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Быстрые ссылки",   headingSchedule:"Моё расписание", headingClassesToday:"Пары сегодня",
+    headingQuick:"Быстрые ссылки",   headingSchedule:"Моё расписание", headingClassesToday:"Пары сегодня", hidePastClasses:"Скрыть прошедшие", hidePastClassesOn:"Прошедшие скрыты", sessionMode:"Режим сессии", sessionBanner:"Режим сессии: новости, скидки и лишние блоки скрыты. Нажми 📚 в шапке, чтобы выключить.",
   schedUpload:"📁 Загрузить ICS из MAIS", schedUploadHint:"MAIS → экспорт календаря → файл .ics. Сохраняется на этом устройстве.",
   schedPasteHint:"На Android/Telegram: если файл не выбирается — открой .ics в текстовом приложении → копируй всё → вставь ниже.",
   schedPastePlaceholder:"Вставь сюда весь текст ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
@@ -1013,7 +1029,7 @@ uk: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Маршрути:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Швидкі посилання",   headingSchedule:"Мій розклад", headingClassesToday:"Пари сьогодні",
+    headingQuick:"Швидкі посилання",   headingSchedule:"Мій розклад", headingClassesToday:"Пари сьогодні", hidePastClasses:"Сховати минулі", hidePastClassesOn:"Минулі сховані", sessionMode:"Режим сесії", sessionBanner:"Режим сесії: новини, знижки та зайві блоки сховані. Натисни 📚 у шапці, щоб вимкнути.",
   schedUpload:"📁 Завантажити ICS з MAIS", schedUploadHint:"MAIS → експорт календаря → файл .ics. Зберігається на цьому пристрої.",
   schedPasteHint:"На Android/Telegram: якщо файл не вибирається — відкрий .ics у текстовому додатку → копіюй усе → встав нижче.",
   schedPastePlaceholder:"Встав сюди весь текст ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
@@ -1102,7 +1118,7 @@ sk: {
   stopBotanicka:"Botanická záhrada", stopTechnicka:"Technická univerzita", stopMathy:"Nám. Jána Mathého",
   stopVysokoskolska:"Vysokoškolská", stopSturova:"Štúrova",
   linesLabel:"Linky:", navGoogle:"Google Maps", navApple:"Apple Maps", navWaze:"Waze",
-    headingQuick:"Rýchle odkazy",   headingSchedule:"Môj rozvrh", headingClassesToday:"Hodiny dnes",
+    headingQuick:"Rýchle odkazy",   headingSchedule:"Môj rozvrh", headingClassesToday:"Hodiny dnes", hidePastClasses:"Skryť minulé", hidePastClassesOn:"Minulé skryté", sessionMode:"Režim skúšok", sessionBanner:"Režim skúšok: novinky, zľavy a navyše bloky sú skryté. Ťukni 📚 v hlavičke pre vypnutie.",
   schedUpload:"📁 Nahrať ICS z MAIS", schedUploadHint:"MAIS → export kalendára → súbor .ics. Uloží sa v tomto zariadení.",
   schedPasteHint:"Na Androide/Telegram: ak sa súbor nedá vybrať — otvor .ics v textovej appke → skopíruj všetko → vlož nižšie.",
   schedPastePlaceholder:"Vlož sem celý text ICS (BEGIN:VCALENDAR … END:VCALENDAR)",
@@ -2024,6 +2040,8 @@ function renderSavings(){
 
 /* Share / offline / collapse / news filter */
 let newsNovinkyOnly = true; // default: hide job posts
+let hidePastClasses = true; // default: hide past classes today
+
 
 function setupCollapse(){
   document.querySelectorAll('[data-collapse]').forEach(btn => {
@@ -2387,6 +2405,12 @@ function renderScheduleList() {
     return `<div class="sched-day"><h3>${escapeHtml(name)}</h3>${day.events.map(eventHtml).join('')}</div>`;
   }).join('');
 }
+function syncHidePastBtn(){
+  const btn = document.getElementById('hide-past-classes-btn');
+  if (!btn) return;
+  btn.classList.toggle('active', !!hidePastClasses);
+  btn.textContent = hidePastClasses ? t('hidePastClassesOn') : t('hidePastClasses');
+}
 function renderTodayClasses() {
   const wrap = document.getElementById('today-classes-wrap');
   const list = document.getElementById('today-classes');
@@ -2394,17 +2418,34 @@ function renderTodayClasses() {
   if (!wrap || !list) return;
   if (!scheduleData.length) { wrap.style.display = 'none'; return; }
   wrap.style.display = 'block';
+  syncHidePastBtn();
   const now = new Date();
   const wd = now.getDay();
   const day = scheduleData.find(d => d.weekday === wd);
-  const events = (day && day.events) ? day.events.filter(ev => eventOccursOn(ev, now)) : [];
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  let events = (day && day.events) ? day.events.filter(ev => eventOccursOn(ev, now)) : [];
+  if (hidePastClasses) {
+    // keep ongoing + upcoming (end roughly: if only startMin, hide when start+0 and clearly past; keep if started < 3h ago without end)
+    events = events.filter(ev => {
+      const start = ev.startMin != null ? ev.startMin : 0;
+      // parse end from "HH:MM – HH:MM" if possible
+      let end = start + 90;
+      if (ev.time && /–|-/.test(ev.time)) {
+        const parts = ev.time.split(/–|-/).map(s => s.trim());
+        if (parts[1]) {
+          const m = parts[1].match(/(\d{1,2}):(\d{2})/);
+          if (m) end = (+m[1]) * 60 + (+m[2]);
+        }
+      }
+      return end >= nowMin; // still ongoing or upcoming
+    });
+  }
   if (!events.length) {
     list.innerHTML = '';
     if (empty) { empty.style.display = 'block'; empty.textContent = t('schedNoClasses'); }
     return;
   }
   if (empty) empty.style.display = 'none';
-  const nowMin = now.getHours() * 60 + now.getMinutes();
   list.innerHTML = events.map(ev => {
     const upcoming = ev.startMin >= nowMin;
     const border = ev.isOnline ? 'online' : (ev.badge === 'cvicenie' ? 'cvicenie' : (ev.badge === 'project' ? 'project' : ''));
@@ -2539,6 +2580,8 @@ async function collectBackup(){
     lang: typeof lang !== 'undefined' ? lang : 'ru',
     kosiceOnly: !!kosice,
     newsNovinkyOnly: typeof newsNovinkyOnly === 'undefined' ? true : !!newsNovinkyOnly,
+    hidePastClasses: typeof hidePastClasses === 'undefined' ? true : !!hidePastClasses,
+    sessionMode: typeof sessionMode === 'undefined' ? false : !!sessionMode,
     favorites: Array.isArray(favs) ? favs : [],
     schedule: Array.isArray(schedule) ? schedule : [],
     contacts: []
@@ -2586,11 +2629,54 @@ async function applyBackup(data){
     newsNovinkyOnly = data.newsNovinkyOnly;
     try { localStorage.setItem('tuke-hub:news-novinky', newsNovinkyOnly ? '1' : '0'); } catch(e){}
   }
+  if (typeof data.hidePastClasses === 'boolean') {
+    hidePastClasses = data.hidePastClasses;
+    try { localStorage.setItem('tuke-hub:hide-past-classes', hidePastClasses ? '1' : '0'); } catch(e){}
+  }
+  if (typeof data.sessionMode === 'boolean') {
+    try { localStorage.setItem('tuke-hub:session-mode', data.sessionMode ? '1' : '0'); } catch(e){}
+  }
   if (Array.isArray(data.schedule)) {
     await saveSchedule(data.schedule);
   }
   location.reload();
 }
+
+
+let sessionMode = false;
+function applySessionMode(on){
+  sessionMode = !!on;
+  document.documentElement.classList.toggle('session-mode', sessionMode);
+  const btn = document.getElementById('session-mode-btn');
+  if (btn) {
+    btn.classList.toggle('active', sessionMode);
+    btn.title = t('sessionMode');
+  }
+  const banner = document.getElementById('session-banner');
+  if (banner) banner.textContent = t('sessionBanner');
+  try { localStorage.setItem('tuke-hub:session-mode', sessionMode ? '1' : '0'); } catch(e){}
+}
+function setupSessionMode(){
+  try { sessionMode = localStorage.getItem('tuke-hub:session-mode') === '1'; } catch(e){ sessionMode = false; }
+  applySessionMode(sessionMode);
+  document.getElementById('session-mode-btn')?.addEventListener('click', () => {
+    applySessionMode(!sessionMode);
+  });
+}
+
+function setupHidePastClasses(){
+  try { hidePastClasses = localStorage.getItem('tuke-hub:hide-past-classes') !== '0'; } catch(e){ hidePastClasses = true; }
+  const btn = document.getElementById('hide-past-classes-btn');
+  if (!btn) return;
+  syncHidePastBtn();
+  btn.onclick = () => {
+    hidePastClasses = !hidePastClasses;
+    try { localStorage.setItem('tuke-hub:hide-past-classes', hidePastClasses ? '1' : '0'); } catch(e){}
+    syncHidePastBtn();
+    renderTodayClasses();
+  };
+}
+
 function setupShareBackup(){
   renderHubQr();
   document.getElementById('copy-hub-link')?.addEventListener('click', async () => {
@@ -2638,6 +2724,8 @@ async function init(){
   renderBuses();
   setupScheduleUI();
   await loadSavedSchedule();
+  setupSessionMode();
+  setupHidePastClasses();
   setupShareBackup();
   renderDaySelector();
   await loadAndRenderMenu();
