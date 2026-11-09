@@ -1,22 +1,17 @@
 {
-  "date": "2026-11-06",
+  "date": "2026-11-09",
   "items": [
     {
       "rawCategory": "Iné",
-      "name": "Piatok .2026 Pondelok 09.11.2026 Utorok 10.11.2026 Streda 11.11.2026 Štvrtok 12.11.2026 Piatok 13.11.2026 Pondelok 16.11.2026",
-      "price": 6.11
+      "name": "Pondelok .2026 Utorok 10.11.2026 Streda 11.11.2026 Štvrtok 12.11.2026 Piatok 13.11.2026 Pondelok 16.11.2026 Utorok 17.11.2026",
+      "price": 9.11
     },
     {
       "rawCategory": "Iné",
       "name": "Jedálny lístok (.2026)",
-      "price": 6.11
-    },
-    {
-      "rawCategory": "Iné",
-      "name": "Vážení zamestnanci a študenti TUKE oznamujeme Vám, že dňa .2026 bude prevádzka z dôvodu plánovanej sanitácie zatvorená. Kolektív ŠJ",
-      "price": 6.11
+      "price": 9.11
     }
   ],
-  "source": "https://jedalen.tuke.sk/jedalny-listok/jedalen-nemcovej-1/2026-11-06",
-  "fetchedAt": "2026-11-06T13:53:23.101Z"
+  "source": "https://jedalen.tuke.sk/jedalny-listok/jedalen-nemcovej-1/2026-11-09",
+  "fetchedAt": "2026-11-09T15:30:00.806Z"
 }
