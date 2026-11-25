@@ -1,17 +1,17 @@
 {
-  "date": "2026-11-24",
+  "date": "2026-11-25",
   "items": [
     {
       "rawCategory": "Iné",
-      "name": "Utorok .2026 Streda 25.11.2026 Štvrtok 26.11.2026 Piatok 27.11.2026 Pondelok 30.11.2026 Utorok 01.12.2026 Streda 02.12.2026",
-      "price": 24.11
+      "name": "Streda .2026 Štvrtok 26.11.2026 Piatok 27.11.2026 Pondelok 30.11.2026 Utorok 01.12.2026 Streda 02.12.2026 Štvrtok 03.12.2026",
+      "price": 25.11
     },
     {
       "rawCategory": "Iné",
       "name": "Jedálny lístok (.2026)",
-      "price": 24.11
+      "price": 25.11
     }
   ],
-  "source": "https://jedalen.tuke.sk/jedalny-listok/jedalen-nemcovej-1/2026-11-24",
-  "fetchedAt": "2026-11-24T17:07:57.813Z"
+  "source": "https://jedalen.tuke.sk/jedalny-listok/jedalen-nemcovej-1/2026-11-25",
+  "fetchedAt": "2026-11-25T16:55:21.690Z"
 }
